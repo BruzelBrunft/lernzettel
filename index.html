@@ -52,10 +52,28 @@
 
   .search-box { width: 100%; padding: 12px 16px; border: none; border-radius: 10px; background: white; font-size: 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); outline: none; }
   .search-box:focus { box-shadow: 0 2px 12px rgba(46,117,182,0.3); }
+  .search-wrap { position: relative; }
+
+  .container { padding-bottom: 100px; }
+
+  .search-nav { position: fixed; left: 12px; right: 12px; bottom: 14px; max-width: 676px; margin: 0 auto; background: #1F4E79; color: white; border-radius: 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.3); display: none; align-items: center; justify-content: space-between; padding: 6px 6px 6px 18px; z-index: 200; }
+  .search-nav.show { display: flex; }
+  .search-nav .count { font-size: 13px; font-weight: 700; white-space: nowrap; min-width: 54px; }
+  .search-nav .nav-btns { display: flex; gap: 6px; }
+  .search-nav button { background: rgba(255,255,255,0.15); border: none; color: white; width: 46px; height: 46px; border-radius: 12px; font-size: 19px; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent; }
+  .search-nav button:active { background: rgba(255,255,255,0.35); }
+  .search-nav .close-btn { background: transparent; font-size: 20px; width: 38px; }
+
+  .back-to-top { position: fixed; right: 16px; bottom: 16px; width: 50px; height: 50px; border-radius: 50%; background: #2E75B6; color: white; border: none; font-size: 22px; box-shadow: 0 4px 14px rgba(0,0,0,0.35); display: none; align-items: center; justify-content: center; z-index: 150; -webkit-tap-highlight-color: transparent; }
+  .back-to-top.show { display: flex; }
+  .back-to-top:active { background: #1F4E79; }
 
   .expand-all { background: #2E75B6; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 13px; cursor: pointer; width: 100%; margin-bottom: 12px; font-weight: 600; }
 
   .formula { background: #E8F5E9; border: 1px solid #A5D6A7; border-radius: 8px; padding: 10px 14px; font-family: monospace; font-size: 14px; color: #2E7D32; text-align: center; margin: 8px 0; font-weight: 700; }
+
+  mark.hl { background: #FFEB3B; color: #1a1a2e; padding: 1px 2px; border-radius: 3px; font-weight: 700; box-shadow: 0 0 0 1px rgba(0,0,0,0.05); }
+  mark.hl.current { background: #FF5252; color: white; }
 </style>
 </head>
 <body>
@@ -66,7 +84,10 @@
 </div>
 
 <div class="container">
-  <input class="search-box" type="text" placeholder="🔍 Suchen..." oninput="search(this.value)">
+  <div class="search-wrap">
+    <input class="search-box" type="text" placeholder="🔍 Suchen..." oninput="debouncedSearch(this.value)" id="searchInput">
+  </div>
+
   <button class="expand-all" onclick="toggleAll()">Alle aufklappen / zuklappen</button>
 
   <!-- F01 -->
@@ -738,6 +759,17 @@
 
 </div>
 
+<div class="search-nav" id="searchNav">
+  <span class="count" id="navCount">1 / 1</span>
+  <div class="nav-btns">
+    <button onclick="navMatch(-1)" aria-label="Vorheriger Treffer">▲</button>
+    <button onclick="navMatch(1)" aria-label="Nächster Treffer">▼</button>
+    <button class="close-btn" onclick="clearSearch()" aria-label="Suche schließen">✕</button>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="scrollToTop()" aria-label="Nach oben scrollen">↑</button>
+
 <script>
 function toggle(header) {
   const body = header.nextElementSibling;
@@ -753,18 +785,144 @@ function toggleAll() {
   document.querySelectorAll('.arrow').forEach(a => a.classList.toggle('open', allOpen));
 }
 
-function search(val) {
-  const q = val.toLowerCase();
-  document.querySelectorAll('.chapter').forEach(ch => {
-    const tags = ch.dataset.tags || '';
-    const text = ch.innerText.toLowerCase();
-    const match = tags.includes(q) || text.includes(q);
-    ch.style.display = match || !q ? 'block' : 'none';
-    if (match && q) {
-      ch.querySelector('.chapter-body').classList.add('open');
-      ch.querySelector('.arrow').classList.add('open');
+let matches = [];
+let currentMatchIdx = -1;
+
+function updateMatches() {
+  matches = Array.from(document.querySelectorAll('mark.hl'));
+  currentMatchIdx = matches.length ? 0 : -1;
+  updateNavUI();
+  if (currentMatchIdx >= 0) matches[currentMatchIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function updateNavUI() {
+  const nav = document.getElementById('searchNav');
+  matches.forEach(m => m.classList.remove('current'));
+  if (matches.length > 0) {
+    nav.classList.add('show');
+    document.getElementById('navCount').textContent = (currentMatchIdx + 1) + ' / ' + matches.length;
+    matches[currentMatchIdx].classList.add('current');
+  } else {
+    nav.classList.remove('show');
+  }
+  evaluateBackToTop();
+}
+
+function navMatch(dir) {
+  if (!matches.length) return;
+  matches[currentMatchIdx].classList.remove('current');
+  currentMatchIdx = (currentMatchIdx + dir + matches.length) % matches.length;
+  matches[currentMatchIdx].classList.add('current');
+  document.getElementById('navCount').textContent = (currentMatchIdx + 1) + ' / ' + matches.length;
+  matches[currentMatchIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+  document.getElementById('searchInput').blur(); // Tastatur weg, mehr Platz zum Lesen
+}
+
+function clearSearch() {
+  const input = document.getElementById('searchInput');
+  input.value = '';
+  search('');
+  input.blur();
+}
+
+function evaluateBackToTop() {
+  const nav = document.getElementById('searchNav');
+  const btn = document.getElementById('backToTop');
+  const shouldShow = window.scrollY > 400 && !nav.classList.contains('show');
+  btn.classList.toggle('show', shouldShow);
+}
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+window.addEventListener('scroll', evaluateBackToTop, { passive: true });
+
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+let searchTimer = null;
+function debouncedSearch(val) {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => search(val), 120);
+}
+
+// Originaltext jedes Chapter-Body einmalig sichern, damit wir vor jeder
+// neuen Suche sauber zurücksetzen können (sonst stapeln sich die <mark>-Tags).
+const originalBodyHTML = new Map();
+const originalNameHTML = new Map();
+document.querySelectorAll('.chapter').forEach(ch => {
+  const body = ch.querySelector('.chapter-body');
+  const name = ch.querySelector('.chapter-name');
+  originalBodyHTML.set(body, body.innerHTML);
+  originalNameHTML.set(name, name.innerHTML);
+});
+
+// Markiert alle Vorkommen von query innerhalb von root, ohne bestehende
+// Tags (b, table, etc.) zu zerstören — läuft nur über reine Textknoten.
+function highlightIn(root, regex) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      if (!node.nodeValue || !regex.test(node.nodeValue)) return NodeFilter.FILTER_REJECT;
+      regex.lastIndex = 0;
+      return NodeFilter.FILTER_ACCEPT;
     }
   });
+  const targets = [];
+  let n;
+  while (n = walker.nextNode()) targets.push(n);
+
+  let count = 0;
+  targets.forEach(textNode => {
+    const text = textNode.nodeValue;
+    const frag = document.createDocumentFragment();
+    let lastIndex = 0;
+    let match;
+    regex.lastIndex = 0;
+    while ((match = regex.exec(text)) !== null) {
+      if (match.index > lastIndex) frag.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+      const mark = document.createElement('mark');
+      mark.className = 'hl';
+      mark.textContent = match[0];
+      frag.appendChild(mark);
+      count++;
+      lastIndex = match.index + match[0].length;
+      if (match[0].length === 0) regex.lastIndex++;
+    }
+    if (lastIndex < text.length) frag.appendChild(document.createTextNode(text.slice(lastIndex)));
+    textNode.parentNode.replaceChild(frag, textNode);
+  });
+  return count;
+}
+
+function search(val) {
+  const q = val.trim();
+  const qLower = q.toLowerCase();
+
+  document.querySelectorAll('.chapter').forEach(ch => {
+    const body = ch.querySelector('.chapter-body');
+    const name = ch.querySelector('.chapter-name');
+
+    // immer zuerst zurücksetzen, bevor neu markiert wird
+    body.innerHTML = originalBodyHTML.get(body);
+    name.innerHTML = originalNameHTML.get(name);
+
+    const tags = ch.dataset.tags || '';
+    const text = body.textContent.toLowerCase() + ' ' + name.textContent.toLowerCase();
+    const match = tags.includes(qLower) || text.includes(qLower);
+    ch.style.display = match || !q ? 'block' : 'none';
+
+    if (match && q) {
+      body.classList.add('open');
+      ch.querySelector('.arrow').classList.add('open');
+      const regex = new RegExp(escapeRegex(q), 'gi');
+      highlightIn(name, regex);
+      highlightIn(body, regex);
+    }
+  });
+
+  updateMatches();
 }
 </script>
 </body>
