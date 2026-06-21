@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Systems Planning — Spickzettel</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f4f8; color: #1a1a2e; }
+  
+  .header { background: linear-gradient(135deg, #1F4E79, #2E75B6); color: white; padding: 16px; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+  .header h1 { font-size: 18px; font-weight: 700; }
+  .header p { font-size: 12px; opacity: 0.85; margin-top: 4px; }
+
+  .container { max-width: 700px; margin: 0 auto; padding: 12px; }
+
+  .chapter { background: white; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; }
+  
+  .chapter-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; cursor: pointer; user-select: none; transition: background 0.2s; }
+  .chapter-header:hover { background: #f8f9ff; }
+  
+  .chapter-title { display: flex; align-items: center; gap: 10px; }
+  .folio-badge { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; white-space: nowrap; }
+  .chapter-name { font-size: 15px; font-weight: 600; }
+  
+  .arrow { font-size: 18px; transition: transform 0.3s; color: #888; }
+  .arrow.open { transform: rotate(180deg); }
+
+  .chapter-body { display: none; padding: 0 16px 16px; border-top: 1px solid #f0f0f0; }
+  .chapter-body.open { display: block; }
+
+  .section { margin-top: 14px; }
+  .section-title { font-size: 13px; font-weight: 700; color: #2E75B6; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  
+  .item { font-size: 13px; line-height: 1.5; padding: 4px 0 4px 14px; border-left: 2px solid #e0e0e0; margin-bottom: 4px; color: #333; }
+  .item b { color: #1a1a2e; }
+  
+  .esel { background: #FFF9C4; border-left: 3px solid #F9A825; border-radius: 6px; padding: 8px 12px; margin: 10px 0; font-size: 13px; color: #5D4037; }
+  .esel::before { content: "🧠 "; }
+  
+  .warnung { background: #FFEBEE; border-left: 3px solid #E53935; border-radius: 6px; padding: 8px 12px; margin: 6px 0; font-size: 12px; color: #B71C1C; font-weight: 500; }
+  .warnung::before { content: "⚠️ "; }
+
+  .table-wrap { overflow-x: auto; margin: 10px 0; border-radius: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { background: #2E75B6; color: white; padding: 8px 10px; text-align: left; font-weight: 600; }
+  td { padding: 7px 10px; border-bottom: 1px solid #f0f0f0; }
+  tr:nth-child(even) td { background: #f8f9ff; }
+  tr:last-child td { border-bottom: none; }
+
+  .tag { display: inline-block; font-size: 11px; background: #E3F2FD; color: #1565C0; padding: 2px 8px; border-radius: 20px; margin: 2px; }
+
+  .search-box { width: 100%; padding: 12px 16px; border: none; border-radius: 10px; background: white; font-size: 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); outline: none; }
+  .search-box:focus { box-shadow: 0 2px 12px rgba(46,117,182,0.3); }
+
+  .expand-all { background: #2E75B6; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 13px; cursor: pointer; width: 100%; margin-bottom: 12px; font-weight: 600; }
+
+  .formula { background: #E8F5E9; border: 1px solid #A5D6A7; border-radius: 8px; padding: 10px 14px; font-family: monospace; font-size: 14px; color: #2E7D32; text-align: center; margin: 8px 0; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Systems Planning — Spickzettel</h1>
+  <p>Klausur Mo 22.6. · 08:00 · 20 Fragen · 30 Min · MC (+1/−0,5) + Offen (0–4 Pkt.)</p>
+</div>
+
+<div class="container">
+  <input class="search-box" type="text" placeholder="🔍 Suchen..." oninput="search(this.value)">
+  <button class="expand-all" onclick="toggleAll()">Alle aufklappen / zuklappen</button>
+
+  <!-- F01 -->
+  <div class="chapter" data-tags="grundlagen programmierung software engineering ethik generisch customized">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#E3F2FD;color:#1565C0;">F01</span>
+        <span class="chapter-name">Grundlagen Software Engineering</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="section">
+        <div class="section-title">Programmierung vs. Software Engineering</div>
+        <div class="item"><b>Side activity</b> = Excel, Hobby, Skripte — nur für sich selbst</div>
+        <div class="item"><b>Professionell</b> = spezieller Einsatzzweck, nicht nur vom Entwickler genutzt, wird gewartet & verändert</div>
+        <div class="item"><b>Software</b> = Code + Konfigurationsdateien + Systemdoku + Anwenderdoku + Websites</div>
+        <div class="esel">KSAW — Konfiguration · System · Anwender · Websites</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Generisch vs. Customized</div>
+        <div class="table-wrap"><table>
+          <tr><th>Typ</th><th>Anforderungen</th><th>Beispiel</th></tr>
+          <tr><td><b>Generische Software</b></td><td>Entwickler definieren</td><td>Word, SAP</td></tr>
+          <tr><td><b>Customized (bespoke)</b></td><td>Kunde definiert</td><td>Spezielles Kontrollsystem</td></tr>
+        </table></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">8 Anwendungstypen</div>
+        <div class="item"><b>Standalone</b> = lokal, kein Internet (Photoshop)</div>
+        <div class="item"><b>Embedded Control</b> = steuert Hardware (Auto, Mikrowelle) — <b>größter Anteil aller Systeme!</b></div>
+        <div class="item"><b>Batch Processing</b> = Input → Output linear (Gehaltsabrechnung)</div>
+        <div class="item"><b>Interaktiv/transaktionsbasiert</b> = E-Commerce, Cloud</div>
+        <div class="item"><b>Entertainment</b> = Spiele, UX wichtig</div>
+        <div class="item"><b>Simulation</b> = rechenintensiv, Hochleistungsrechner</div>
+        <div class="item"><b>Datensammlung</b> = Sensoren</div>
+        <div class="item"><b>Systeme von Systemen</b> = mehrere Systeme kombiniert</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">4 Fundamentale Aktivitäten (AUSWENDIG!)</div>
+        <div class="item"><b>1. Softwarespezifikation</b> — Was soll es tun? Grenzen definieren</div>
+        <div class="item"><b>2. Softwaredesign & -implementierung</b> — Architektur + Code</div>
+        <div class="item"><b>3. Softwarevalidierung</b> — Erfüllt es die Anforderungen des Kunden?</div>
+        <div class="item"><b>4. Softwareevolution</b> — Laufend anpassen & weiterentwickeln</div>
+        <div class="warnung">Softwarevalidierung ≠ technisch testen — es geht um Kundenanforderungen!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Ethik</div>
+        <div class="item">Geheimhaltung · Kompetenz · IP respektieren · Kein Computermissbrauch</div>
+        <div class="item">ACM & IEEE — Code of Ethics</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F02 -->
+  <div class="chapter" data-tags="prozessmodelle wasserfall agile reuse spiral rup prototyp inkrement validierung">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#E8F5E9;color:#2E7D32;">F02</span>
+        <span class="chapter-name">Softwareprozessmodelle</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="section">
+        <div class="section-title">Kategorien</div>
+        <div class="item"><b>Plangetrieben</b> = alles im Voraus geplant, Fortschritt gegen Plan gemessen</div>
+        <div class="item"><b>Inkrementell</b> = schrittweise Planung, flexibler bei Änderungen</div>
+        <div class="warnung">Plangetrieben ≠ Generisch — zwei verschiedene Dimensionen!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">3 Generische Prozessmodelle</div>
+        <div class="esel">WAR — Wasserfall · Agile · Reuse-orientiert</div>
+        <div class="table-wrap"><table>
+          <tr><th>Modell</th><th>Wann?</th><th>Merkmal</th></tr>
+          <tr><td><b>Wasserfallmodell</b></td><td>Klare, stabile Anforderungen</td><td>Sequenziell, plangetrieben</td></tr>
+          <tr><td><b>Agile Entwicklung</b></td><td>Sich ändernde Anforderungen</td><td>Verwoben, inkrementell</td></tr>
+          <tr><td><b>Reuse-orientiert</b></td><td>Bestehende Komponenten nutzbar</td><td>Fokus auf Integration</td></tr>
+        </table></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Wasserfallmodell — 5 Phasen</div>
+        <div class="item">Requirements-Definition → System & Software Design → Implementation & Unit Testing → Integration & System Testing → Operation & Maintenance</div>
+        <div class="item"><b>Hauptproblem:</b> early commitments, pre-mature freezing</div>
+        <div class="item"><b>Nur einsetzen wenn:</b> Anforderungen klar & stabil!</div>
+        <div class="warnung">Wasserfall liefert NICHT inkrementell und hat KEIN Feedback zwischen Phasen!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Reuse-orientierte Entwicklung — 4 Phasen</div>
+        <div class="item">Component Analysis → Requirements Modification → System Design with Reuse → Development & Integration</div>
+        <div class="item"><b>Komponenten:</b> Webservices · Libraries · Collections · Stand-Alone-Software</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Softwarespezifikation</div>
+        <div class="item">Machbarkeitsstudie → Erhebung → <b>Lastenheft</b> → Validierung → <b>Pflichtenheft</b></div>
+        <div class="item"><b>Lastenheft</b> = WAS der Kunde will · <b>Pflichtenheft</b> = WIE es gebaut wird</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Softwarevalidierung — Testschritte</div>
+        <div class="item"><b>Unit Tests</b> → <b>Integration Tests</b> → <b>System- & Akzeptanztests</b></div>
+        <div class="item"><b>Alpha Testing</b> = einzelne Kunden · <b>Beta Testing</b> = mehrere Kunden</div>
+        <div class="item">V-Modell = plangetriebene Testpläne</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Umgang mit Veränderung</div>
+        <div class="item"><b>Veränderungsvermeidung</b> → Prototypen (werden weggeworfen!)</div>
+        <div class="item"><b>Veränderungstoleranz</b> → Inkrementelle Auslieferung (Teil des finalen Systems!)</div>
+        <div class="warnung">Prototyp ≠ Inkrement! Prototyp weggeworfen, Inkrement = echtes System!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Spiralmodell (Boehm) — Hauptmerkmal: RISIKO</div>
+        <div class="item">Object Setting → Risk Assessment & Reduction → Development & Validation → Planning</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">RUP — 3 Perspektiven</div>
+        <div class="item"><b>Dynamisch:</b> Inception → Elaboration → Construction</div>
+        <div class="item"><b>Statisch:</b> Core Workflows + Support Workflows</div>
+        <div class="item"><b>Praktisch:</b> 6 Praktiken (iterativ, Anforderungsmgmt., Komponenten, UML, QS, Änderungen)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F03 -->
+  <div class="chapter" data-tags="agile scrum xp extreme programming sprint backlog manifesto">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#FFF3E0;color:#E65100;">F03</span>
+        <span class="chapter-name">Agile Softwareentwicklung</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="section">
+        <div class="section-title">Agiles Manifest — 4 Werte</div>
+        <div class="esel">IWCR — Ich Will Cool Reagieren</div>
+        <div class="table-wrap"><table>
+          <tr><th>Höher gewichtet</th><th>als</th></tr>
+          <tr><td><b>Individuals & Interactions</b></td><td>Processes & Tools</td></tr>
+          <tr><td><b>Working Software</b></td><td>Comprehensive Documentation</td></tr>
+          <tr><td><b>Customer Collaboration</b></td><td>Contract Negotiation</td></tr>
+          <tr><td><b>Responding to Change</b></td><td>Following a Plan</td></tr>
+        </table></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">5 Grundprinzipien agiler Methoden</div>
+        <div class="esel">KI-PAM — Kunde · Inkrement · People · Akzeptieren · Maintain Simplicity</div>
+        <div class="item">Kund:inneneinbindung · Inkrementelle Auslieferung · People not Process · Änderungen akzeptieren · Maintain Simplicity</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Extreme Programming (XP)</div>
+        <div class="item"><b>User-Stories</b> = Anforderungen auf Story Cards, priorisiert vom Kunden</div>
+        <div class="item"><b>Spike</b> = Prototyp in XP, kein echter Code, wird weggeworfen</div>
+        <div class="item"><b>Test-First</b> = Tests VOR dem Code schreiben</div>
+        <div class="item"><b>Pair Programming</b> = 2 Entwickler, 1 Computer</div>
+        <div class="item">"Change will happen, we deal with it when it actually occurs!"</div>
+        <div class="warnung">XP = WIE Code geschrieben wird · Scrum = WIE Projekt gemanagt wird</div>
+        <div class="warnung">Tests werden VOR dem Code geschrieben — nicht danach!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Scrum — Sprint Cycle</div>
+        <div class="esel">BASD-R — Boss Auftrag Schnell Durchführen Resultate zeigen</div>
+        <div class="item"><b>Backlog → Assess → Select → Develop → Review</b> · Dauer: 2–4 Wochen</div>
+        <div class="item"><b>Product Backlog</b> = Liste aller Features</div>
+        <div class="item"><b>Daily Meetings</b> = tägliche Arbeit beurteilen</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Scrum — 3 Rollen</div>
+        <div class="table-wrap"><table>
+          <tr><th>Rolle</th><th>Aufgabe</th></tr>
+          <tr><td><b>Product Owner</b></td><td>Businessentscheidungen, Features priorisieren, User-Stories</td></tr>
+          <tr><td><b>Scrum Master</b></td><td>Team-Coach, Meetings, Hindernisse beseitigen</td></tr>
+          <tr><td><b>Scrum Team</b></td><td>Die Entwickler:innen</td></tr>
+        </table></div>
+        <div class="warnung">Scrum Master ist KEIN klassischer Projektmanager — er ist ein Coach!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Wasserfall vs. Agile — wann was?</div>
+        <div class="table-wrap"><table>
+          <tr><th>Situation</th><th>Tendenz</th></tr>
+          <tr><td>Stabile, klare Anforderungen</td><td>Wasserfall</td></tr>
+          <tr><td>Sich ändernde Anforderungen</td><td>Agile</td></tr>
+          <tr><td>Großes System</td><td>Wasserfall</td></tr>
+          <tr><td>Sicherheitskritisch</td><td>Wasserfall</td></tr>
+          <tr><td>Kleines, erfahrenes Team</td><td>Agile</td></tr>
+          <tr><td>Externe Regulierungen</td><td>Wasserfall</td></tr>
+        </table></div>
+        <div class="warnung">Agile ist NICHT immer schneller als Wasserfall!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F04 -->
+  <div class="chapter" data-tags="anforderungsanalyse requirements funktional nichtfunktional pflichtenheft lastenheft ethnographie">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#F3E5F5;color:#6A1B9A;">F04</span>
+        <span class="chapter-name">Anforderungsanalyse</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="section">
+        <div class="section-title">User- vs. Systemanforderungen</div>
+        <div class="table-wrap"><table>
+          <tr><th></th><th>User-Anforderungen</th><th>Systemanforderungen</th></tr>
+          <tr><td><b>Charakter</b></td><td>Natürliche Sprache, High-Level</td><td>Detailliert, technisch</td></tr>
+          <tr><td><b>Für wen?</b></td><td>Manager ohne Technikwissen</td><td>Entwickler</td></tr>
+          <tr><td><b>Dokument</b></td><td>Lastenheft</td><td>Pflichtenheft</td></tr>
+        </table></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Funktional vs. Nicht-funktional</div>
+        <div class="item"><b>Funktional</b> = WAS das System tun soll (z.B. User kann Geld überweisen, Konto erstellen)</div>
+        <div class="item"><b>Nicht-funktional</b> = WIE GUT (z.B. Ladezeit < 2 Sek., Security, Usability)</div>
+        <div class="warnung">Schnelle Antwortzeiten = NICHT-funktional! Konto erstellen = funktional!</div>
+        <div class="warnung">Nicht-funktionale Anforderungen nicht erfüllt → GANZES System abgelehnt!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">3 Herkunftsarten nicht-funktionaler Anforderungen</div>
+        <div class="esel">POE — Produkt · Organisation · Extern</div>
+        <div class="item"><b>Produktanforderungen</b> = Geschwindigkeit, Schnittstellen</div>
+        <div class="item"><b>Organisationale Anforderungen</b> = Betriebssystemvorgaben, Sicherheitsregeln</div>
+        <div class="item"><b>Externe Anforderungen</b> = Gesetze, ethische Vorgaben</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Spezifikation & Pflichtenheft</div>
+        <div class="item"><b>Spezifikation</b> = klar, eindeutig, komplett, konsistent — beschreibt Verhalten, nicht Implementierung</div>
+        <div class="item"><b>Pflichtenheft</b> = offizielles Dokument, Vertragsgrundlage, was exakt gebaut wird</div>
+        <div class="item"><b>VOLERE</b> = strukturierte natürliche Sprache, Karten mit vordefinierten Feldern</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">RE-Prozess — 4 Schritte</div>
+        <div class="esel">MESV — Mein Extra Schlaues Vorgehen</div>
+        <div class="item"><b>Machbarkeitsstudie → Erhebung → Spezifikation → Validierung</b></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Erhebungstechniken</div>
+        <div class="esel">ISUE — Interviews · Szenarien · Use Cases · Ethnographie</div>
+        <div class="item"><b>Interviews</b> = offen (frei) vs. geschlossen (vordefiniert)</div>
+        <div class="item"><b>Szenarien</b> = theoretische Beispiele, leicht verständlich</div>
+        <div class="item"><b>Use Cases</b> = Akteure (Strichfiguren) + Interaktionen (Ellipsen)</div>
+        <div class="item"><b>Ethnographie</b> = Beobachtung im Arbeitsalltag, KEIN Interview!</div>
+        <div class="warnung">Ethnographie = Beobachtungstechnik — KEIN Interview!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">5 Validierungs-Checks</div>
+        <div class="esel">VCCRV — Valide · Consistent · Complete · Realistic · Verifiable</div>
+        <div class="item">Validity · Consistency · Completeness · Realism · Verifiability</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F05 -->
+  <div class="chapter" data-tags="systemmodellierung uml klassendiagramm use case sequenz aktivität zustand kontext aggregation">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#E0F2F1;color:#004D40;">F05</span>
+        <span class="chapter-name">Systemmodellierung</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="section">
+        <div class="section-title">4 Modellierungsperspektiven</div>
+        <div class="esel">ESIV — Extern · Strukturell · Interaktion · Verhalten</div>
+        <div class="table-wrap"><table>
+          <tr><th>Perspektive</th><th>Diagramm</th><th>Zeigt</th></tr>
+          <tr><td><b>Extern</b></td><td>Kontextmodell</td><td>Systemgrenze + Umgebung</td></tr>
+          <tr><td><b>Strukturell</b></td><td>Klassendiagramm</td><td>Aufbau des Systems</td></tr>
+          <tr><td><b>Interaktion</b></td><td>Use Case + Sequenzdiagramm</td><td>Wer kommuniziert mit wem</td></tr>
+          <tr><td><b>Verhalten</b></td><td>Aktivitäts- + Zustandsdiagramm</td><td>Wie reagiert das System</td></tr>
+        </table></div>
+        <div class="warnung">Klassendiagramm = STRUKTURELL! Use Case = INTERAKTION! (nicht Verhalten!)</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Kontextmodell</div>
+        <div class="item">Zeigt DASS Beziehungen bestehen — NICHT die Art/den Typ!</div>
+        <div class="warnung">Kontextmodell zeigt NICHT wie die Beziehungen sind!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Klassendiagramm</div>
+        <div class="item">Aufbau: <b>Oben</b> = Name · <b>Mitte</b> = Attribute · <b>Unten</b> = Operationen</div>
+        <div class="item"><b>Generalisierung/Vererbung</b> = Pfeil zur Elternklasse</div>
+        <div class="item"><b>Aggregation</b> = offene Raute (Teil kann ohne Ganzes existieren)</div>
+        <div class="item"><b>Komposition</b> = gefüllte Raute (Teil kann NICHT ohne Ganzes existieren)</div>
+        <div class="warnung">Pfeil = Vererbung · Offene Raute = Aggregation · Gefüllte Raute = Komposition</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Interaktionsmodelle</div>
+        <div class="item"><b>Use Case</b> = WER macht WAS mit dem System (Strichfigur → Ellipse → Rechteck)</div>
+        <div class="item"><b>Sequenzdiagramm</b> = zeitliche Abfolge von oben nach unten, Lebenslinien</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Verhaltensmodelle</div>
+        <div class="item"><b>Aktivitätsdiagramm</b> = datengetrieben, Daten fließen durch Schritte (gefüllter Kreis = Start)</div>
+        <div class="item"><b>Zustandsdiagramm</b> = ereignisgetrieben, Stimuli lösen Zustandswechsel aus, Superstates</div>
+        <div class="warnung">Zustandsdiagramm zeigt KEINEN Datenfluss — nur Verhalten!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Model-Driven Engineering (MDE)</div>
+        <div class="item">Modelle statt Programme → Code wird automatisch generiert</div>
+        <div class="item"><b>Pro:</b> höhere Abstraktion, weniger Fehler, plattformunabhängig</div>
+        <div class="item"><b>Con:</b> Integration & Testen bleiben aufwändig</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F06 -->
+  <div class="chapter" data-tags="architektur design muster mvc layered repository client server pipe filter">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#FBE9E7;color:#BF360C;">F06</span>
+        <span class="chapter-name">Systemarchitektur & Design</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="section">
+        <div class="section-title">3 Vorteile klarer Architektur (Bass et al.)</div>
+        <div class="esel">SKW — Stakeholder · Systemanalyse · Wiederverwendung</div>
+        <div class="item"><b>Stakeholder-Kommunikation</b> = alle reden über dasselbe</div>
+        <div class="item"><b>Systemanalyse</b> = nichtfunktionale Eigenschaften früh prüfen</div>
+        <div class="item"><b>Wiederverwendung</b> = Architektur in anderen Projekten nutzen</div>
+        <div class="warnung">Architektur betrifft NICHT-funktionale Anforderungen — nicht funktionale!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">4 Architekturperspektiven (Krutchen)</div>
+        <div class="esel">LPEP — Lustige Profis Entwickeln Physisch</div>
+        <div class="item"><b>Logisch</b> = Schlüsselobjekte</div>
+        <div class="item"><b>Prozess</b> = Laufzeit & Performance</div>
+        <div class="item"><b>Entwicklung</b> = wer baut was</div>
+        <div class="item"><b>Physisch</b> = Hardware & Verteilung</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Nichtfunktionale Anforderungen & Architektur</div>
+        <div class="table-wrap"><table>
+          <tr><th>Eigenschaft</th><th>Strategie</th></tr>
+          <tr><td><b>Leistung</b></td><td>Wichtige Operationen in wenigen Komponenten</td></tr>
+          <tr><td><b>Sicherheit</b></td><td>Kritische Assets in inneren Schichten</td></tr>
+          <tr><td><b>Erreichbarkeit</b></td><td>Redundanz einbauen</td></tr>
+          <tr><td><b>Wartbarkeit</b></td><td>Kleine, austauschbare Komponenten</td></tr>
+        </table></div>
+        <div class="item"><b>Trade-off!</b> Performance (wenige große Komponenten) vs. Wartbarkeit (viele kleine)</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">5 Architekturmuster — PRIORITÄT A!</div>
+        <div class="esel">MLRCP — Meine Liebe Rote Chili Pizza</div>
+        <div class="table-wrap"><table>
+          <tr><th>Muster</th><th>Merkmal</th><th>Typisch für</th></tr>
+          <tr><td><b>MVC</b></td><td>Trennt Daten, Darstellung, Steuerung</td><td>Web-Apps, GUI</td></tr>
+          <tr><td><b>Layered</b></td><td>Schichten unabhängig ersetzbar</td><td>Multi-Plattform</td></tr>
+          <tr><td><b>Repository</b></td><td>Zentrale Datenbank für alle</td><td>Gemeinsame Datenbasis</td></tr>
+          <tr><td><b>Client-Server</b></td><td>Server bietet Dienste, Client ruft ab</td><td>Internet, Web</td></tr>
+          <tr><td><b>Pipe & Filter</b></td><td>Daten fließen durch Transformationen</td><td>Unix-Systeme</td></tr>
+        </table></div>
+        <div class="warnung">MVC ≠ Repository ≠ Layered — häufigste Verwechslung in der Klausur!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F07 -->
+  <div class="chapter" data-tags="soziotechnisch systeme schichten emergent procurement development operation">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#F1F8E9;color:#33691E;">F07</span>
+        <span class="chapter-name">Soziotechnische Systeme</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="section">
+        <div class="section-title">Technisch vs. Soziotechnisch</div>
+        <div class="item"><b>Technisch</b> = Hardware + Software, KEINE Menschen/Prozesse (z.B. Fernseher, PC)</div>
+        <div class="item"><b>Soziotechnisch</b> = + Menschen + Prozesse + Organisation (z.B. Krankenhaus, Buchverlag)</div>
+        <div class="warnung">Fernseher/PC = technisch! Krankenhaus/Buchverlag = soziotechnisch!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">7 Schichten</div>
+        <div class="esel">Harte Burschen Können Programmieren, Gibt Ordentliche Software</div>
+        <div class="item">Hardware → Betriebssystem → Kommunikation & Daten → Programme → Geschäftsprozesse → Organisation → Gesellschaft</div>
+        <div class="item">Interaktionen meist zwischen Nachbarschichten — aber nicht immer (z.B. Gesetz → direkt auf Programm)</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">3 Merkmale soziotechnischer Systeme</div>
+        <div class="esel">ENO — Emergent · Non-deterministisch · Organisatorisch</div>
+        <div class="item"><b>Emergente Eigenschaften</b> = entstehen erst aus dem Zusammenspiel aller Teile</div>
+        <div class="item"><b>Non-deterministisch</b> = bei gleicher Eingabe nicht immer dasselbe Ergebnis (Menschen!)</div>
+        <div class="item"><b>Organisatorisch zielabhängig</b> = Erfolg hängt von Managementzielen ab</div>
+        <div class="warnung">Soziotechn. Systeme liefern bei gleicher Eingabe NICHT immer dasselbe!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">3 Organisatorische Einflussfaktoren</div>
+        <div class="esel">PJO — Prozess · Job · Organisation</div>
+        <div class="item"><b>Prozessänderungen</b> = neue Arbeitsabläufe → Widerstand</div>
+        <div class="item"><b>Jobveränderung</b> = Dequalifizierung → aktiver Widerstand</div>
+        <div class="item"><b>Organisatorische Änderungen</b> = veränderte Machtstrukturen</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">3 Hauptprozesse Systems Engineering</div>
+        <div class="esel">PDO — Procurement · Development · Operation</div>
+        <div class="item"><b>Procurement (Beschaffung)</b> = was kaufen wir? COTS = Standardprodukte von der Stange</div>
+        <div class="item"><b>Development (Entwicklung)</b> = Anforderungsanalyse als Brücke, Systemintegration schwierig</div>
+        <div class="item"><b>Operation (Betrieb)</b> = Schulung, unentdeckte Fehler, Schnittstellenprobleme</div>
+        <div class="warnung">COTS entsprechen SELTEN genau den Anforderungen!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F08 -->
+  <div class="chapter" data-tags="projektplanung kosten schätzung gantt meilenstein deliverable velocity pricing scrum">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#FFF8E1;color:#F57F17;">F08</span>
+        <span class="chapter-name">Software Projektplanung</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="section">
+        <div class="section-title">Grundlagen</div>
+        <div class="item">Planung in 3 Phasen: <b>Angebotsphase · Anlaufphase · laufend</b></div>
+        <div class="item">Immer <b>pessimistisch schätzen</b> + <b>30–50% Puffer</b> einplanen!</div>
+        <div class="item"><b>Meilenstein</b> = intern, zeigt Fortschritt · <b>Deliverable</b> = geht an Kunden</div>
+        <div class="item"><b>Gantt-Diagramm</b> = wann was passiert · <b>Netzwerkdiagramm</b> = Abhängigkeiten</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Agile Planung</div>
+        <div class="item"><b>Release-Planung</b> = mehrere Monate</div>
+        <div class="item"><b>Iterationsplanung</b> = 2–4 Wochen</div>
+        <div class="item"><b>Velocity</b> = Komplexitätspunkte die Team pro Iteration schafft</div>
+        <div class="item"><b>Planning Game</b> = User-Stories + Komplexitätspunkte (8=schwer, 2=leicht)</div>
+        <div class="item"><b>Pricing to win</b> = Preis fix, Umfang variabel</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Kostenschätzung</div>
+        <div class="item">2 Methoden: <b>Erfahrungsbasiert</b> (Expertenwissen) vs. <b>Algorithmisch</b> (Formel)</div>
+        <div class="formula">Aufwand = A × Größe^B × M</div>
+        <div class="item"><b>A</b> = organisationsabhängig · <b>B</b> = 1–1,5 (exponentiell!) · <b>M</b> = Multiplikator</div>
+        <div class="item"><b>Aufwand (Personenmonate)</b> = größter Kostenposten!</div>
+        <div class="warnung">Mehr Leute ≠ schneller! Mehr Kommunikations-Overhead!</div>
+        <div class="warnung">Preis ≠ einfach Kosten + 10% Gewinn — viele Faktoren spielen rein!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F09 -->
+  <div class="chapter" data-tags="qualitätsmanagement iso 9001 reviews inspektionen standards qualitätssicherung">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#FFEBEE;color:#B71C1C;">F09</span>
+        <span class="chapter-name">Software Qualitätsmanagement</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="section">
+        <div class="section-title">QS vs. QK vs. QM</div>
+        <div class="table-wrap"><table>
+          <tr><th>Begriff</th><th>Bedeutung</th></tr>
+          <tr><td><b>Qualitätssicherung (QS)</b></td><td>Prozesse & Standards definieren — vorbeugend</td></tr>
+          <tr><td><b>Qualitätskontrolle (QK)</b></td><td>Fehlerhafte Produkte finden — nachträglich</td></tr>
+          <tr><td><b>Qualitätsmanagement (QM)</b></td><td>Einhaltung prüfen — separates Team!</td></tr>
+        </table></div>
+        <div class="warnung">QM-Team ≠ Entwicklerteam!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">3 QM-Schwerpunkte</div>
+        <div class="item"><b>Organisatorische Ebene</b> = Standards für Doku, Design, Implementierung</div>
+        <div class="item"><b>Projektebene</b> = Überprüfung der Einhaltung</div>
+        <div class="item"><b>Qualitätsplanung</b> = Qualitätsplan mit Zielen, Prozessen, Standards</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Softwarequalität</div>
+        <div class="item">Qualitätsprobleme erstmals in den <b>1960er Jahren</b> erkannt</div>
+        <div class="item">Qualität betrifft hauptsächlich <b>nichtfunktionale</b> Anforderungen</div>
+        <div class="item"><b>15 Qualitätsmerkmale</b> (Boehm et al.) — nicht alle gleichzeitig optimierbar!</div>
+        <div class="item">Software wird <b>entwickelt</b>, nicht hergestellt → Toleranzbegriff der Fertigung greift nicht</div>
+        <div class="warnung">Softwarequalität ist SUBJEKTIV — nie 'objektiv' ankreuzen!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Standards</div>
+        <div class="item"><b>Produktstandards</b> = Dokumentations-, Kodierungsstandards</div>
+        <div class="item"><b>Prozessstandards</b> = Spezifikations-, Design-, Validierungsprozesse</div>
+        <div class="item"><b>ISO 9001</b> = internationales Normenwerk, Qualitätshandbuch, ursprünglich 1987</div>
+        <div class="warnung">ISO-9001-Zertifizierung garantiert NICHT bessere Software!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Reviews & Inspektionen</div>
+        <div class="item"><b>3 Phasen:</b> Pre-Review → Review-Meeting (~2h) → Post-Review</div>
+        <div class="item"><b>Review-Team:</b> 3–4 Personen</div>
+        <div class="item"><b>Ziel:</b> Qualitätsverbesserung — NICHT Mitarbeiterbewertung!</div>
+        <div class="item"><b>Software-Inspektionen</b> = Peer-Reviews, zeilenweise Code-Überprüfung</div>
+        <div class="item"><b>Agil:</b> Scrum = Review je Iteration · XP = Pair Programming als laufende Überprüfung</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F10 -->
+  <div class="chapter" data-tags="konfigurationsmanagement change management versionsmanagement git release building">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#E0F7FA;color:#006064;">F10</span>
+        <span class="chapter-name">Software Konfigurationsmanagement</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="section">
+        <div class="section-title">4 Hauptprozesse</div>
+        <div class="esel">CVSR — Change · Versions · System Building · Release</div>
+        <div class="item"><b>Change-Management</b> = Änderungen steuern</div>
+        <div class="item"><b>Versionsmanagement</b> = Versionen nachverfolgen</div>
+        <div class="item"><b>System Building</b> = Komponenten zusammensetzen</div>
+        <div class="item"><b>Release-Management</b> = Software für den Release vorbereiten</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Change-Management</div>
+        <div class="item"><b>CRF (Change Request Form)</b> = gemeinsames Dokument, ständig aktualisiert</div>
+        <div class="item"><b>Change Control Board</b> = unabhängige Gruppe, entscheidet geschäftlich (nicht technisch)</div>
+        <div class="item">5 Entscheidungsfaktoren: Konsequenz · Vorteile · Betroffene User · Kosten · Release-Zyklus</div>
+        <div class="item"><b>Derivation History</b> = Änderungshistorie im Quellcode-Kommentar</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Versionsmanagement</div>
+        <div class="item"><b>Codeline</b> = Abfolge der Versionen einer Komponente</div>
+        <div class="item"><b>Baseline</b> = Definition eines kompletten Systems (alle Versionen)</div>
+        <div class="item"><b>Tools:</b> Git · Subversion · CVS · Mercurial</div>
+        <div class="item">check in / check out → Branches → Merging</div>
+        <div class="warnung">Git/Subversion können MIT agiler Entwicklung verwendet werden!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">System Building</div>
+        <div class="item">3 Plattformen: <b>Entwicklungssystem · Build-Server · Zielumgebung</b></div>
+        <div class="item"><b>Continuous Integration:</b> Mainline prüfen → bauen → testen → einchecken → Build-Server → neue Baseline</div>
+        <div class="item">Ziel: komplettes System mit einem Befehl/Klick</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Release-Management</div>
+        <div class="table-wrap"><table>
+          <tr><th>Typ</th><th>Inhalt</th><th>Kosten</th></tr>
+          <tr><td><b>Major Release</b></td><td>Neue Funktionalität</td><td>meist kostenpflichtig</td></tr>
+          <tr><td><b>Minor Release</b></td><td>Fehlerbehebung</td><td>meist kostenlos</td></tr>
+        </table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F11 -->
+  <div class="chapter" data-tags="lifecycle lebenszyklus stakeholder tco total cost ownership management">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#EDE7F6;color:#4A148C;">F11</span>
+        <span class="chapter-name">Life Cycle & Stakeholder Management</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="section">
+        <div class="section-title">8 Lebenszyklusphasen</div>
+        <div class="item">Initiation → Machbarkeitsstudie → Anforderungsanalyse → Systemdesign → System Build → Systemimplementierung → Maintenance → System Kill</div>
+        <div class="item"><b>Maintenance:</b> Unproduktiv (Fehlerbehebung) vs. Produktiv (neue Funktionen)</div>
+        <div class="item"><b>System Kill</b> = Fokus auf Datenmigration</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">TCO (Total Cost of Ownership)</div>
+        <div class="item">Zeigt Systemnutzung, Systemnutzen und Systemkosten über die <b>gesamte Lebensdauer</b></div>
+        <div class="item">NICHT nur Anschaffungs-/Entwicklungskosten!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Stakeholder</div>
+        <div class="item">Einzelpersonen oder Organisationen die <b>aktiv beteiligt</b> sind oder deren <b>Interessen betroffen</b> sind</div>
+        <div class="item">Analyse am wichtigsten zu <b>Projektbeginn</b> — Stakeholder haben dann größten Einfluss</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Stakeholder-Analyse — 4 Schritte</div>
+        <div class="item"><b>1.</b> Identifikation (Brainstorming, Organigramme)</div>
+        <div class="item"><b>2.</b> Systemlandkarte (visuelle Darstellung der Beziehungen)</div>
+        <div class="item"><b>3.</b> Analysetabelle (Macht & Einfluss)</div>
+        <div class="item"><b>4.</b> Analyseraster (grafische Visualisierung)</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Umgang mit Stakeholdern (Power/Interest-Grid)</div>
+        <div class="table-wrap"><table>
+          <tr><th>Einfluss</th><th>Interesse</th><th>Strategie</th></tr>
+          <tr><td>Groß</td><td>Hoch</td><td>Stark einbeziehen, höchste Priorität</td></tr>
+          <tr><td>Groß</td><td>Niedrig</td><td>Zufriedenstellen, nicht langweilen</td></tr>
+          <tr><td>Gering</td><td>Hoch</td><td>Informieren, persönlicher Kontakt</td></tr>
+          <tr><td>Gering</td><td>Niedrig</td><td>Beobachten, wenig Kommunikation</td></tr>
+        </table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MC FALLEN -->
+  <div class="chapter" data-tags="mc falle klausur tipps always never immer">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#FFEBEE;color:#B71C1C;">⚠️</span>
+        <span class="chapter-name">TOP MC-Fallen aus den Altklausuren</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="warnung">"always/immer/never/nie/garantiert" in MC → meist FALSCH!</div>
+      <div class="warnung">MVC ≠ Repository ≠ Layered — häufigste Verwechslung!</div>
+      <div class="warnung">Wasserfall: KEIN Feedback, KEIN Inkrement, plangetrieben!</div>
+      <div class="warnung">Softwarequalität ist SUBJEKTIV — nie "objektiv" ankreuzen!</div>
+      <div class="warnung">Scrum Master ≠ Projektmanager — er ist ein Coach!</div>
+      <div class="warnung">Prototyp wird weggeworfen · Inkrement ist Teil des finalen Systems!</div>
+      <div class="warnung">Mehr Leute ≠ schneller (Kommunikations-Overhead)!</div>
+      <div class="warnung">ISO-9001 ≠ bessere Software garantiert!</div>
+      <div class="warnung">Ethnographie = Beobachtung, KEIN Interview!</div>
+      <div class="warnung">Kontextmodell zeigt NICHT die Art der Beziehungen!</div>
+      <div class="warnung">Schnelle Antwortzeiten = NICHT-funktional!</div>
+      <div class="warnung">Fernseher/PC = technisch (NICHT soziotechnisch)!</div>
+      <div class="warnung">Git/Subversion funktionieren MIT agiler Entwicklung!</div>
+      <div class="warnung">Validierung = Kundenanforderungen erfüllt? (NICHT technisch testen!)</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toggle(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('.arrow');
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+let allOpen = false;
+function toggleAll() {
+  allOpen = !allOpen;
+  document.querySelectorAll('.chapter-body').forEach(b => b.classList.toggle('open', allOpen));
+  document.querySelectorAll('.arrow').forEach(a => a.classList.toggle('open', allOpen));
+}
+
+function search(val) {
+  const q = val.toLowerCase();
+  document.querySelectorAll('.chapter').forEach(ch => {
+    const tags = ch.dataset.tags || '';
+    const text = ch.innerText.toLowerCase();
+    const match = tags.includes(q) || text.includes(q);
+    ch.style.display = match || !q ? 'block' : 'none';
+    if (match && q) {
+      ch.querySelector('.chapter-body').classList.add('open');
+      ch.querySelector('.arrow').classList.add('open');
+    }
+  });
+}
+</script>
+</body>
+</html>
