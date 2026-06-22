@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Systems Planning — Spickzettel</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f4f8; color: #1a1a2e; }
+  
+  .header { background: linear-gradient(135deg, #1F4E79, #2E75B6); color: white; padding: 16px; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+  .header h1 { font-size: 18px; font-weight: 700; }
+  .header p { font-size: 12px; opacity: 0.85; margin-top: 4px; }
+
+  .container { max-width: 700px; margin: 0 auto; padding: 12px; }
+
+  .chapter { background: white; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; }
+  
+  .chapter-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; cursor: pointer; user-select: none; transition: background 0.2s; }
+  .chapter-header:hover { background: #f8f9ff; }
+  
+  .chapter-title { display: flex; align-items: center; gap: 10px; }
+  .folio-badge { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; white-space: nowrap; }
+  .chapter-name { font-size: 15px; font-weight: 600; }
+  
+  .arrow { font-size: 18px; transition: transform 0.3s; color: #888; }
+  .arrow.open { transform: rotate(180deg); }
+
+  .chapter-body { display: none; padding: 0 16px 16px; border-top: 1px solid #f0f0f0; }
+  .chapter-body.open { display: block; }
+
+  .section { margin-top: 14px; }
+  .section-title { font-size: 13px; font-weight: 700; color: #2E75B6; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  
+  .item { font-size: 13px; line-height: 1.5; padding: 4px 0 4px 14px; border-left: 2px solid #e0e0e0; margin-bottom: 4px; color: #333; }
+  .item b { color: #1a1a2e; }
+  
+  .esel { background: #FFF9C4; border-left: 3px solid #F9A825; border-radius: 6px; padding: 8px 12px; margin: 10px 0; font-size: 13px; color: #5D4037; }
+  .esel::before { content: "🧠 "; }
+  
+  .warnung { background: #FFEBEE; border-left: 3px solid #E53935; border-radius: 6px; padding: 8px 12px; margin: 6px 0; font-size: 12px; color: #B71C1C; font-weight: 500; }
+  .warnung::before { content: "⚠️ "; }
+
+  .table-wrap { overflow-x: auto; margin: 10px 0; border-radius: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { background: #2E75B6; color: white; padding: 8px 10px; text-align: left; font-weight: 600; }
+  td { padding: 7px 10px; border-bottom: 1px solid #f0f0f0; }
+  tr:nth-child(even) td { background: #f8f9ff; }
+  tr:last-child td { border-bottom: none; }
+
+  .tag { display: inline-block; font-size: 11px; background: #E3F2FD; color: #1565C0; padding: 2px 8px; border-radius: 20px; margin: 2px; }
+
+  .search-box { width: 100%; padding: 12px 16px; border: none; border-radius: 10px; background: white; font-size: 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); outline: none; }
+  .search-box:focus { box-shadow: 0 2px 12px rgba(46,117,182,0.3); }
+  .search-wrap { position: relative; }
+
+  .container { padding-bottom: 100px; }
+
+  .search-nav { position: fixed; left: 12px; right: 12px; bottom: 14px; max-width: 676px; margin: 0 auto; background: #1F4E79; color: white; border-radius: 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.3); display: none; align-items: center; justify-content: space-between; padding: 6px 6px 6px 18px; z-index: 200; }
+  .search-nav.show { display: flex; }
+  .search-nav .count { font-size: 13px; font-weight: 700; white-space: nowrap; min-width: 54px; }
+  .search-nav .nav-btns { display: flex; gap: 6px; }
+  .search-nav button { background: rgba(255,255,255,0.15); border: none; color: white; width: 46px; height: 46px; border-radius: 12px; font-size: 19px; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent; }
+  .search-nav button:active { background: rgba(255,255,255,0.35); }
+  .search-nav .close-btn { background: transparent; font-size: 20px; width: 38px; }
+
+  .back-to-top { position: fixed; right: 16px; bottom: 16px; width: 50px; height: 50px; border-radius: 50%; background: #2E75B6; color: white; border: none; font-size: 22px; box-shadow: 0 4px 14px rgba(0,0,0,0.35); display: none; align-items: center; justify-content: center; z-index: 150; -webkit-tap-highlight-color: transparent; }
+  .back-to-top.show { display: flex; }
+  .back-to-top:active { background: #1F4E79; }
+
+  .expand-all { background: #2E75B6; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 13px; cursor: pointer; width: 100%; margin-bottom: 12px; font-weight: 600; }
+
+  .formula { background: #E8F5E9; border: 1px solid #A5D6A7; border-radius: 8px; padding: 10px 14px; font-family: monospace; font-size: 14px; color: #2E7D32; text-align: center; margin: 8px 0; font-weight: 700; }
+
+  mark.hl { background: #FFEB3B; color: #1a1a2e; padding: 1px 2px; border-radius: 3px; font-weight: 700; box-shadow: 0 0 0 1px rgba(0,0,0,0.05); }
+  mark.hl.current { background: #FF5252; color: white; }
+
+  /* ── NO-ZOOM iOS FIX: alle Inputs mind. 16px ── */
+  input, select, textarea { font-size: 16px !important; }
+  button { touch-action: manipulation; }
+
+  /* ── TAB BAR ── */
+  .tab-bar { display:flex; background:#1F4E79; padding:0 12px 0; gap:4px; }
+  .tab-btn { flex:1; padding:10px 4px; background:transparent; border:none; color:rgba(255,255,255,0.65); font-size:14px; font-weight:600; border-bottom:3px solid transparent; cursor:pointer; transition:all .2s; -webkit-tap-highlight-color:transparent; }
+  .tab-btn.active { color:#fff; border-bottom-color:#5BC4F5; }
+
+  /* ── ALTKLAUSUREN CONTAINER ── */
+  #aq-container { max-width:700px; margin:0 auto; padding:12px; padding-bottom:100px; display:none; }
+
+  /* ── AQ CONTROLS ── */
+  .aq-search-wrap { position:relative; margin-bottom:10px; }
+  .aq-search-box { width:100%; padding:12px 16px; border:none; border-radius:10px; background:white; font-size:16px; box-shadow:0 2px 8px rgba(0,0,0,.08); outline:none; }
+  .aq-search-box:focus { box-shadow:0 2px 12px rgba(46,117,182,.3); }
+  .aq-filters { display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap; }
+  .aq-filter-btn { padding:7px 14px; border-radius:20px; border:none; background:#e3f0ff; color:#1565C0; font-size:13px; font-weight:600; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  .aq-filter-btn.active { background:#2E75B6; color:white; }
+  .aq-lang-row { display:flex; justify-content:flex-end; margin-bottom:10px; gap:6px; }
+  .aq-lang-btn { padding:6px 16px; border-radius:20px; border:none; background:#e3f0ff; color:#1565C0; font-size:13px; font-weight:600; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  .aq-lang-btn.active { background:#2E75B6; color:white; }
+  .aq-count { font-size:12px; color:#888; margin-bottom:8px; padding-left:4px; }
+
+  /* ── FRAGEN-KARTE ── */
+  .aq-card { background:white; border-radius:12px; margin-bottom:10px; box-shadow:0 2px 8px rgba(0,0,0,.08); overflow:hidden; }
+  .aq-card-head { display:flex; align-items:flex-start; gap:10px; padding:14px 16px; cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent; }
+  .aq-card-head:active { background:#f8f9ff; }
+  .aq-src-badge { font-size:10px; font-weight:700; padding:3px 8px; border-radius:20px; white-space:nowrap; flex-shrink:0; margin-top:2px; }
+  .aq-src-K1 { background:#E3F2FD; color:#1565C0; }
+  .aq-src-K2 { background:#F3E5F5; color:#6A1B9A; }
+  .aq-src-extra { background:#E8F5E9; color:#2E7D32; }
+  .aq-q-num { font-size:11px; font-weight:700; color:#aaa; flex-shrink:0; margin-top:3px; }
+  .aq-q-text { font-size:14px; font-weight:600; color:#1a1a2e; flex:1; line-height:1.4; }
+  .aq-arrow { font-size:18px; color:#888; flex-shrink:0; transition:transform .3s; margin-top:1px; }
+  .aq-arrow.open { transform:rotate(180deg); }
+
+  .aq-card-body { display:none; padding:0 16px 14px; border-top:1px solid #f0f0f0; }
+  .aq-card-body.open { display:block; }
+
+  .aq-option { display:flex; align-items:flex-start; gap:10px; padding:8px 0; border-bottom:1px solid #f5f5f5; font-size:13px; line-height:1.4; }
+  .aq-option:last-of-type { border-bottom:none; }
+  .aq-opt-icon { font-size:15px; flex-shrink:0; margin-top:1px; }
+  .aq-opt-text { flex:1; color:#333; }
+  .aq-opt-text.correct { color:#2E7D32; font-weight:600; }
+  .aq-opt-text.incorrect { color:#C62828; }
+  .aq-note { background:#FFF9C4; border-left:3px solid #F9A825; border-radius:6px; padding:7px 10px; margin-top:8px; font-size:12px; color:#5D4037; }
+
+  mark.aq-hl { background:#FFEB3B; color:#1a1a2e; padding:1px 2px; border-radius:3px; font-weight:700; }
+  mark.aq-hl.current { background:#FF5252; color:white; }
+
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Systems Planning — Spickzettel</h1>
+  <p>Klausur Mo 22.6. · 08:00 · 20 Fragen · 30 Min · MC (+1/−0,5) + Offen (0–4 Pkt.)</p>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" id="tab-sp" onclick="switchTab('sp')">📚 Spickzettel</button>
+  <button class="tab-btn" id="tab-aq" onclick="switchTab('aq')">📝 Übungsfragen</button>
+</div>
+
+<div class="container" id="sp-container">
+  <div class="search-wrap">
+    <input class="search-box" type="text" placeholder="🔍 Suchen..." oninput="debouncedSearch(this.value)" id="searchInput">
+  </div>
+
+  <button class="expand-all" onclick="toggleAll()">Alle aufklappen / zuklappen</button>
+
+  <!-- F01 -->
+  <div class="chapter" data-tags="grundlagen programmierung software engineering ethik generisch customized">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#E3F2FD;color:#1565C0;">F01</span>
+        <span class="chapter-name">Grundlagen Software Engineering</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="section">
+        <div class="section-title">Programmierung vs. Software Engineering</div>
+        <div class="item"><b>Side activity</b> = Excel, Hobby, Skripte — nur für sich selbst</div>
+        <div class="item"><b>Professionell</b> = spezieller Einsatzzweck, nicht nur vom Entwickler genutzt, wird gewartet & verändert</div>
+        <div class="item"><b>Software</b> = Code + Konfigurationsdateien + Systemdoku + Anwenderdoku + Websites</div>
+        <div class="esel">KSAW — Konfiguration · System · Anwender · Websites</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Generisch vs. Customized</div>
+        <div class="table-wrap"><table>
+          <tr><th>Typ</th><th>Anforderungen</th><th>Beispiel</th></tr>
+          <tr><td><b>Generische Software</b></td><td>Entwickler definieren</td><td>Word, SAP</td></tr>
+          <tr><td><b>Customized (bespoke)</b></td><td>Kunde definiert</td><td>Spezielles Kontrollsystem</td></tr>
+        </table></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">8 Anwendungstypen</div>
+        <div class="item"><b>Standalone</b> = lokal, kein Internet (Photoshop)</div>
+        <div class="item"><b>Embedded Control</b> = steuert Hardware (Auto, Mikrowelle) — <b>größter Anteil aller Systeme!</b></div>
+        <div class="item"><b>Batch Processing</b> = Input → Output linear (Gehaltsabrechnung)</div>
+        <div class="item"><b>Interaktiv/transaktionsbasiert</b> = E-Commerce, Cloud</div>
+        <div class="item"><b>Entertainment</b> = Spiele, UX wichtig</div>
+        <div class="item"><b>Simulation</b> = rechenintensiv, Hochleistungsrechner</div>
+        <div class="item"><b>Datensammlung</b> = Sensoren</div>
+        <div class="item"><b>Systeme von Systemen</b> = mehrere Systeme kombiniert</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">4 Fundamentale Aktivitäten (AUSWENDIG!)</div>
+        <div class="item"><b>1. Softwarespezifikation</b> — Was soll es tun? Grenzen definieren</div>
+        <div class="item"><b>2. Softwaredesign & -implementierung</b> — Architektur + Code</div>
+        <div class="item"><b>3. Softwarevalidierung</b> — Erfüllt es die Anforderungen des Kunden?</div>
+        <div class="item"><b>4. Softwareevolution</b> — Laufend anpassen & weiterentwickeln</div>
+        <div class="warnung">Softwarevalidierung ≠ technisch testen — es geht um Kundenanforderungen!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Ethik</div>
+        <div class="item">Geheimhaltung · Kompetenz · IP respektieren · Kein Computermissbrauch</div>
+        <div class="item">ACM & IEEE — Code of Ethics</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F02 -->
+  <div class="chapter" data-tags="prozessmodelle wasserfall agile reuse spiral rup prototyp inkrement validierung">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#E8F5E9;color:#2E7D32;">F02</span>
+        <span class="chapter-name">Softwareprozessmodelle</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="section">
+        <div class="section-title">Kategorien</div>
+        <div class="item"><b>Plangetrieben</b> = alles im Voraus geplant, Fortschritt gegen Plan gemessen</div>
+        <div class="item"><b>Inkrementell</b> = schrittweise Planung, flexibler bei Änderungen</div>
+        <div class="warnung">Plangetrieben ≠ Generisch — zwei verschiedene Dimensionen!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">3 Generische Prozessmodelle</div>
+        <div class="esel">WAR — Wasserfall · Agile · Reuse-orientiert</div>
+        <div class="table-wrap"><table>
+          <tr><th>Modell</th><th>Wann?</th><th>Merkmal</th></tr>
+          <tr><td><b>Wasserfallmodell</b></td><td>Klare, stabile Anforderungen</td><td>Sequenziell, plangetrieben</td></tr>
+          <tr><td><b>Agile Entwicklung</b></td><td>Sich ändernde Anforderungen</td><td>Verwoben, inkrementell</td></tr>
+          <tr><td><b>Reuse-orientiert</b></td><td>Bestehende Komponenten nutzbar</td><td>Fokus auf Integration</td></tr>
+        </table></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Wasserfallmodell — 5 Phasen</div>
+        <div class="item">Requirements-Definition → System & Software Design → Implementation & Unit Testing → Integration & System Testing → Operation & Maintenance</div>
+        <div class="item"><b>Hauptproblem:</b> early commitments, pre-mature freezing</div>
+        <div class="item"><b>Nur einsetzen wenn:</b> Anforderungen klar & stabil!</div>
+        <div class="warnung">Wasserfall liefert NICHT inkrementell und hat KEIN Feedback zwischen Phasen!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Reuse-orientierte Entwicklung — 4 Phasen</div>
+        <div class="item">Component Analysis → Requirements Modification → System Design with Reuse → Development & Integration</div>
+        <div class="item"><b>Komponenten:</b> Webservices · Libraries · Collections · Stand-Alone-Software</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Softwarespezifikation</div>
+        <div class="item">Machbarkeitsstudie → Erhebung → <b>Lastenheft</b> → Validierung → <b>Pflichtenheft</b></div>
+        <div class="item"><b>Lastenheft</b> = WAS der Kunde will · <b>Pflichtenheft</b> = WIE es gebaut wird</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Softwarevalidierung — Testschritte</div>
+        <div class="item"><b>Unit Tests</b> → <b>Integration Tests</b> → <b>System- & Akzeptanztests</b></div>
+        <div class="item"><b>Alpha Testing</b> = einzelne Kunden · <b>Beta Testing</b> = mehrere Kunden</div>
+        <div class="item">V-Modell = plangetriebene Testpläne</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Umgang mit Veränderung</div>
+        <div class="item"><b>Veränderungsvermeidung</b> → Prototypen (werden weggeworfen!)</div>
+        <div class="item"><b>Veränderungstoleranz</b> → Inkrementelle Auslieferung (Teil des finalen Systems!)</div>
+        <div class="warnung">Prototyp ≠ Inkrement! Prototyp weggeworfen, Inkrement = echtes System!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Spiralmodell (Boehm) — Hauptmerkmal: RISIKO</div>
+        <div class="item">Object Setting → Risk Assessment & Reduction → Development & Validation → Planning</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">RUP — 3 Perspektiven</div>
+        <div class="item"><b>Dynamisch:</b> Inception → Elaboration → Construction</div>
+        <div class="item"><b>Statisch:</b> Core Workflows + Support Workflows</div>
+        <div class="item"><b>Praktisch:</b> 6 Praktiken (iterativ, Anforderungsmgmt., Komponenten, UML, QS, Änderungen)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F03 -->
+  <div class="chapter" data-tags="agile scrum xp extreme programming sprint backlog manifesto">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#FFF3E0;color:#E65100;">F03</span>
+        <span class="chapter-name">Agile Softwareentwicklung</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="section">
+        <div class="section-title">Agiles Manifest — 4 Werte</div>
+        <div class="esel">IWCR — Ich Will Cool Reagieren</div>
+        <div class="table-wrap"><table>
+          <tr><th>Höher gewichtet</th><th>als</th></tr>
+          <tr><td><b>Individuals & Interactions</b></td><td>Processes & Tools</td></tr>
+          <tr><td><b>Working Software</b></td><td>Comprehensive Documentation</td></tr>
+          <tr><td><b>Customer Collaboration</b></td><td>Contract Negotiation</td></tr>
+          <tr><td><b>Responding to Change</b></td><td>Following a Plan</td></tr>
+        </table></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">5 Grundprinzipien agiler Methoden</div>
+        <div class="esel">KI-PAM — Kunde · Inkrement · People · Akzeptieren · Maintain Simplicity</div>
+        <div class="item">Kund:inneneinbindung · Inkrementelle Auslieferung · People not Process · Änderungen akzeptieren · Maintain Simplicity</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Extreme Programming (XP)</div>
+        <div class="item"><b>User-Stories</b> = Anforderungen auf Story Cards, priorisiert vom Kunden</div>
+        <div class="item"><b>Spike</b> = Prototyp in XP, kein echter Code, wird weggeworfen</div>
+        <div class="item"><b>Test-First</b> = Tests VOR dem Code schreiben</div>
+        <div class="item"><b>Pair Programming</b> = 2 Entwickler, 1 Computer</div>
+        <div class="item">"Change will happen, we deal with it when it actually occurs!"</div>
+        <div class="warnung">XP = WIE Code geschrieben wird · Scrum = WIE Projekt gemanagt wird</div>
+        <div class="warnung">Tests werden VOR dem Code geschrieben — nicht danach!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Scrum — Sprint Cycle</div>
+        <div class="esel">BASD-R — Boss Auftrag Schnell Durchführen Resultate zeigen</div>
+        <div class="item"><b>Backlog → Assess → Select → Develop → Review</b> · Dauer: 2–4 Wochen</div>
+        <div class="item"><b>Product Backlog</b> = Liste aller Features</div>
+        <div class="item"><b>Daily Meetings</b> = tägliche Arbeit beurteilen</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Scrum — 3 Rollen</div>
+        <div class="table-wrap"><table>
+          <tr><th>Rolle</th><th>Aufgabe</th></tr>
+          <tr><td><b>Product Owner</b></td><td>Businessentscheidungen, Features priorisieren, User-Stories</td></tr>
+          <tr><td><b>Scrum Master</b></td><td>Team-Coach, Meetings, Hindernisse beseitigen</td></tr>
+          <tr><td><b>Scrum Team</b></td><td>Die Entwickler:innen</td></tr>
+        </table></div>
+        <div class="warnung">Scrum Master ist KEIN klassischer Projektmanager — er ist ein Coach!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Wasserfall vs. Agile — wann was?</div>
+        <div class="table-wrap"><table>
+          <tr><th>Situation</th><th>Tendenz</th></tr>
+          <tr><td>Stabile, klare Anforderungen</td><td>Wasserfall</td></tr>
+          <tr><td>Sich ändernde Anforderungen</td><td>Agile</td></tr>
+          <tr><td>Großes System</td><td>Wasserfall</td></tr>
+          <tr><td>Sicherheitskritisch</td><td>Wasserfall</td></tr>
+          <tr><td>Kleines, erfahrenes Team</td><td>Agile</td></tr>
+          <tr><td>Externe Regulierungen</td><td>Wasserfall</td></tr>
+        </table></div>
+        <div class="warnung">Agile ist NICHT immer schneller als Wasserfall!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F04 -->
+  <div class="chapter" data-tags="anforderungsanalyse requirements funktional nichtfunktional pflichtenheft lastenheft ethnographie">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#F3E5F5;color:#6A1B9A;">F04</span>
+        <span class="chapter-name">Anforderungsanalyse</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="section">
+        <div class="section-title">User- vs. Systemanforderungen</div>
+        <div class="table-wrap"><table>
+          <tr><th></th><th>User-Anforderungen</th><th>Systemanforderungen</th></tr>
+          <tr><td><b>Charakter</b></td><td>Natürliche Sprache, High-Level</td><td>Detailliert, technisch</td></tr>
+          <tr><td><b>Für wen?</b></td><td>Manager ohne Technikwissen</td><td>Entwickler</td></tr>
+          <tr><td><b>Dokument</b></td><td>Lastenheft</td><td>Pflichtenheft</td></tr>
+        </table></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Funktional vs. Nicht-funktional</div>
+        <div class="item"><b>Funktional</b> = WAS das System tun soll (z.B. User kann Geld überweisen, Konto erstellen)</div>
+        <div class="item"><b>Nicht-funktional</b> = WIE GUT (z.B. Ladezeit < 2 Sek., Security, Usability)</div>
+        <div class="warnung">Schnelle Antwortzeiten = NICHT-funktional! Konto erstellen = funktional!</div>
+        <div class="warnung">Nicht-funktionale Anforderungen nicht erfüllt → GANZES System abgelehnt!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">3 Herkunftsarten nicht-funktionaler Anforderungen</div>
+        <div class="esel">POE — Produkt · Organisation · Extern</div>
+        <div class="item"><b>Produktanforderungen</b> = Geschwindigkeit, Schnittstellen</div>
+        <div class="item"><b>Organisationale Anforderungen</b> = Betriebssystemvorgaben, Sicherheitsregeln</div>
+        <div class="item"><b>Externe Anforderungen</b> = Gesetze, ethische Vorgaben</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Spezifikation & Pflichtenheft</div>
+        <div class="item"><b>Spezifikation</b> = klar, eindeutig, komplett, konsistent — beschreibt Verhalten, nicht Implementierung</div>
+        <div class="item"><b>Pflichtenheft</b> = offizielles Dokument, Vertragsgrundlage, was exakt gebaut wird</div>
+        <div class="item"><b>VOLERE</b> = strukturierte natürliche Sprache, Karten mit vordefinierten Feldern</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">RE-Prozess — 4 Schritte</div>
+        <div class="esel">MESV — Mein Extra Schlaues Vorgehen</div>
+        <div class="item"><b>Machbarkeitsstudie → Erhebung → Spezifikation → Validierung</b></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Erhebungstechniken</div>
+        <div class="esel">ISUE — Interviews · Szenarien · Use Cases · Ethnographie</div>
+        <div class="item"><b>Interviews</b> = offen (frei) vs. geschlossen (vordefiniert)</div>
+        <div class="item"><b>Szenarien</b> = theoretische Beispiele, leicht verständlich</div>
+        <div class="item"><b>Use Cases</b> = Akteure (Strichfiguren) + Interaktionen (Ellipsen)</div>
+        <div class="item"><b>Ethnographie</b> = Beobachtung im Arbeitsalltag, KEIN Interview!</div>
+        <div class="warnung">Ethnographie = Beobachtungstechnik — KEIN Interview!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">5 Validierungs-Checks</div>
+        <div class="esel">VCCRV — Valide · Consistent · Complete · Realistic · Verifiable</div>
+        <div class="item">Validity · Consistency · Completeness · Realism · Verifiability</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F05 -->
+  <div class="chapter" data-tags="systemmodellierung uml klassendiagramm use case sequenz aktivität zustand kontext aggregation">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#E0F2F1;color:#004D40;">F05</span>
+        <span class="chapter-name">Systemmodellierung</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="section">
+        <div class="section-title">4 Modellierungsperspektiven</div>
+        <div class="esel">ESIV — Extern · Strukturell · Interaktion · Verhalten</div>
+        <div class="table-wrap"><table>
+          <tr><th>Perspektive</th><th>Diagramm</th><th>Zeigt</th></tr>
+          <tr><td><b>Extern</b></td><td>Kontextmodell</td><td>Systemgrenze + Umgebung</td></tr>
+          <tr><td><b>Strukturell</b></td><td>Klassendiagramm</td><td>Aufbau des Systems</td></tr>
+          <tr><td><b>Interaktion</b></td><td>Use Case + Sequenzdiagramm</td><td>Wer kommuniziert mit wem</td></tr>
+          <tr><td><b>Verhalten</b></td><td>Aktivitäts- + Zustandsdiagramm</td><td>Wie reagiert das System</td></tr>
+        </table></div>
+        <div class="warnung">Klassendiagramm = STRUKTURELL! Use Case = INTERAKTION! (nicht Verhalten!)</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Kontextmodell</div>
+        <div class="item">Zeigt DASS Beziehungen bestehen — NICHT die Art/den Typ!</div>
+        <div class="warnung">Kontextmodell zeigt NICHT wie die Beziehungen sind!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Klassendiagramm</div>
+        <div class="item">Aufbau: <b>Oben</b> = Name · <b>Mitte</b> = Attribute · <b>Unten</b> = Operationen</div>
+        <div class="item"><b>Generalisierung/Vererbung</b> = Pfeil zur Elternklasse</div>
+        <div class="item"><b>Aggregation</b> = offene Raute (Teil kann ohne Ganzes existieren)</div>
+        <div class="item"><b>Komposition</b> = gefüllte Raute (Teil kann NICHT ohne Ganzes existieren)</div>
+        <div class="warnung">Pfeil = Vererbung · Offene Raute = Aggregation · Gefüllte Raute = Komposition</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Interaktionsmodelle</div>
+        <div class="item"><b>Use Case</b> = WER macht WAS mit dem System (Strichfigur → Ellipse → Rechteck)</div>
+        <div class="item"><b>Sequenzdiagramm</b> = zeitliche Abfolge von oben nach unten, Lebenslinien</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Verhaltensmodelle</div>
+        <div class="item"><b>Aktivitätsdiagramm</b> = datengetrieben, Daten fließen durch Schritte (gefüllter Kreis = Start)</div>
+        <div class="item"><b>Zustandsdiagramm</b> = ereignisgetrieben, Stimuli lösen Zustandswechsel aus, Superstates</div>
+        <div class="warnung">Zustandsdiagramm zeigt KEINEN Datenfluss — nur Verhalten!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Model-Driven Engineering (MDE)</div>
+        <div class="item">Modelle statt Programme → Code wird automatisch generiert</div>
+        <div class="item"><b>Pro:</b> höhere Abstraktion, weniger Fehler, plattformunabhängig</div>
+        <div class="item"><b>Con:</b> Integration & Testen bleiben aufwändig</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F06 -->
+  <div class="chapter" data-tags="architektur design muster mvc layered repository client server pipe filter">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#FBE9E7;color:#BF360C;">F06</span>
+        <span class="chapter-name">Systemarchitektur & Design</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="section">
+        <div class="section-title">3 Vorteile klarer Architektur (Bass et al.)</div>
+        <div class="esel">SKW — Stakeholder · Systemanalyse · Wiederverwendung</div>
+        <div class="item"><b>Stakeholder-Kommunikation</b> = alle reden über dasselbe</div>
+        <div class="item"><b>Systemanalyse</b> = nichtfunktionale Eigenschaften früh prüfen</div>
+        <div class="item"><b>Wiederverwendung</b> = Architektur in anderen Projekten nutzen</div>
+        <div class="warnung">Architektur betrifft NICHT-funktionale Anforderungen — nicht funktionale!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">4 Architekturperspektiven (Krutchen)</div>
+        <div class="esel">LPEP — Lustige Profis Entwickeln Physisch</div>
+        <div class="item"><b>Logisch</b> = Schlüsselobjekte</div>
+        <div class="item"><b>Prozess</b> = Laufzeit & Performance</div>
+        <div class="item"><b>Entwicklung</b> = wer baut was</div>
+        <div class="item"><b>Physisch</b> = Hardware & Verteilung</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Nichtfunktionale Anforderungen & Architektur</div>
+        <div class="table-wrap"><table>
+          <tr><th>Eigenschaft</th><th>Strategie</th></tr>
+          <tr><td><b>Leistung</b></td><td>Wichtige Operationen in wenigen Komponenten</td></tr>
+          <tr><td><b>Sicherheit</b></td><td>Kritische Assets in inneren Schichten</td></tr>
+          <tr><td><b>Erreichbarkeit</b></td><td>Redundanz einbauen</td></tr>
+          <tr><td><b>Wartbarkeit</b></td><td>Kleine, austauschbare Komponenten</td></tr>
+        </table></div>
+        <div class="item"><b>Trade-off!</b> Performance (wenige große Komponenten) vs. Wartbarkeit (viele kleine)</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">5 Architekturmuster — PRIORITÄT A!</div>
+        <div class="esel">MLRCP — Meine Liebe Rote Chili Pizza</div>
+        <div class="table-wrap"><table>
+          <tr><th>Muster</th><th>Merkmal</th><th>Typisch für</th></tr>
+          <tr><td><b>MVC</b></td><td>Trennt Daten, Darstellung, Steuerung</td><td>Web-Apps, GUI</td></tr>
+          <tr><td><b>Layered</b></td><td>Schichten unabhängig ersetzbar</td><td>Multi-Plattform</td></tr>
+          <tr><td><b>Repository</b></td><td>Zentrale Datenbank für alle</td><td>Gemeinsame Datenbasis</td></tr>
+          <tr><td><b>Client-Server</b></td><td>Server bietet Dienste, Client ruft ab</td><td>Internet, Web</td></tr>
+          <tr><td><b>Pipe & Filter</b></td><td>Daten fließen durch Transformationen</td><td>Unix-Systeme</td></tr>
+        </table></div>
+        <div class="warnung">MVC ≠ Repository ≠ Layered — häufigste Verwechslung in der Klausur!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F07 -->
+  <div class="chapter" data-tags="soziotechnisch systeme schichten emergent procurement development operation">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#F1F8E9;color:#33691E;">F07</span>
+        <span class="chapter-name">Soziotechnische Systeme</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="section">
+        <div class="section-title">Technisch vs. Soziotechnisch</div>
+        <div class="item"><b>Technisch</b> = Hardware + Software, KEINE Menschen/Prozesse (z.B. Fernseher, PC)</div>
+        <div class="item"><b>Soziotechnisch</b> = + Menschen + Prozesse + Organisation (z.B. Krankenhaus, Buchverlag)</div>
+        <div class="warnung">Fernseher/PC = technisch! Krankenhaus/Buchverlag = soziotechnisch!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">7 Schichten</div>
+        <div class="esel">Harte Burschen Können Programmieren, Gibt Ordentliche Software</div>
+        <div class="item">Hardware → Betriebssystem → Kommunikation & Daten → Programme → Geschäftsprozesse → Organisation → Gesellschaft</div>
+        <div class="item">Interaktionen meist zwischen Nachbarschichten — aber nicht immer (z.B. Gesetz → direkt auf Programm)</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">3 Merkmale soziotechnischer Systeme</div>
+        <div class="esel">ENO — Emergent · Non-deterministisch · Organisatorisch</div>
+        <div class="item"><b>Emergente Eigenschaften</b> = entstehen erst aus dem Zusammenspiel aller Teile</div>
+        <div class="item"><b>Non-deterministisch</b> = bei gleicher Eingabe nicht immer dasselbe Ergebnis (Menschen!)</div>
+        <div class="item"><b>Organisatorisch zielabhängig</b> = Erfolg hängt von Managementzielen ab</div>
+        <div class="warnung">Soziotechn. Systeme liefern bei gleicher Eingabe NICHT immer dasselbe!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">3 Organisatorische Einflussfaktoren</div>
+        <div class="esel">PJO — Prozess · Job · Organisation</div>
+        <div class="item"><b>Prozessänderungen</b> = neue Arbeitsabläufe → Widerstand</div>
+        <div class="item"><b>Jobveränderung</b> = Dequalifizierung → aktiver Widerstand</div>
+        <div class="item"><b>Organisatorische Änderungen</b> = veränderte Machtstrukturen</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">3 Hauptprozesse Systems Engineering</div>
+        <div class="esel">PDO — Procurement · Development · Operation</div>
+        <div class="item"><b>Procurement (Beschaffung)</b> = was kaufen wir? COTS = Standardprodukte von der Stange</div>
+        <div class="item"><b>Development (Entwicklung)</b> = Anforderungsanalyse als Brücke, Systemintegration schwierig</div>
+        <div class="item"><b>Operation (Betrieb)</b> = Schulung, unentdeckte Fehler, Schnittstellenprobleme</div>
+        <div class="warnung">COTS entsprechen SELTEN genau den Anforderungen!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F08 -->
+  <div class="chapter" data-tags="projektplanung kosten schätzung gantt meilenstein deliverable velocity pricing scrum">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#FFF8E1;color:#F57F17;">F08</span>
+        <span class="chapter-name">Software Projektplanung</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="section">
+        <div class="section-title">Grundlagen</div>
+        <div class="item">Planung in 3 Phasen: <b>Angebotsphase · Anlaufphase · laufend</b></div>
+        <div class="item">Immer <b>pessimistisch schätzen</b> + <b>30–50% Puffer</b> einplanen!</div>
+        <div class="item"><b>Meilenstein</b> = intern, zeigt Fortschritt · <b>Deliverable</b> = geht an Kunden</div>
+        <div class="item"><b>Gantt-Diagramm</b> = wann was passiert · <b>Netzwerkdiagramm</b> = Abhängigkeiten</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Agile Planung</div>
+        <div class="item"><b>Release-Planung</b> = mehrere Monate</div>
+        <div class="item"><b>Iterationsplanung</b> = 2–4 Wochen</div>
+        <div class="item"><b>Velocity</b> = Komplexitätspunkte die Team pro Iteration schafft</div>
+        <div class="item"><b>Planning Game</b> = User-Stories + Komplexitätspunkte (8=schwer, 2=leicht)</div>
+        <div class="item"><b>Pricing to win</b> = Preis fix, Umfang variabel</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Kostenschätzung</div>
+        <div class="item">2 Methoden: <b>Erfahrungsbasiert</b> (Expertenwissen) vs. <b>Algorithmisch</b> (Formel)</div>
+        <div class="formula">Aufwand = A × Größe^B × M</div>
+        <div class="item"><b>A</b> = organisationsabhängig · <b>B</b> = 1–1,5 (exponentiell!) · <b>M</b> = Multiplikator</div>
+        <div class="item"><b>Aufwand (Personenmonate)</b> = größter Kostenposten!</div>
+        <div class="warnung">Mehr Leute ≠ schneller! Mehr Kommunikations-Overhead!</div>
+        <div class="warnung">Preis ≠ einfach Kosten + 10% Gewinn — viele Faktoren spielen rein!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F09 -->
+  <div class="chapter" data-tags="qualitätsmanagement iso 9001 reviews inspektionen standards qualitätssicherung">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#FFEBEE;color:#B71C1C;">F09</span>
+        <span class="chapter-name">Software Qualitätsmanagement</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="section">
+        <div class="section-title">QS vs. QK vs. QM</div>
+        <div class="table-wrap"><table>
+          <tr><th>Begriff</th><th>Bedeutung</th></tr>
+          <tr><td><b>Qualitätssicherung (QS)</b></td><td>Prozesse & Standards definieren — vorbeugend</td></tr>
+          <tr><td><b>Qualitätskontrolle (QK)</b></td><td>Fehlerhafte Produkte finden — nachträglich</td></tr>
+          <tr><td><b>Qualitätsmanagement (QM)</b></td><td>Einhaltung prüfen — separates Team!</td></tr>
+        </table></div>
+        <div class="warnung">QM-Team ≠ Entwicklerteam!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">3 QM-Schwerpunkte</div>
+        <div class="item"><b>Organisatorische Ebene</b> = Standards für Doku, Design, Implementierung</div>
+        <div class="item"><b>Projektebene</b> = Überprüfung der Einhaltung</div>
+        <div class="item"><b>Qualitätsplanung</b> = Qualitätsplan mit Zielen, Prozessen, Standards</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Softwarequalität</div>
+        <div class="item">Qualitätsprobleme erstmals in den <b>1960er Jahren</b> erkannt</div>
+        <div class="item">Qualität betrifft hauptsächlich <b>nichtfunktionale</b> Anforderungen</div>
+        <div class="item"><b>15 Qualitätsmerkmale</b> (Boehm et al.) — nicht alle gleichzeitig optimierbar!</div>
+        <div class="item">Software wird <b>entwickelt</b>, nicht hergestellt → Toleranzbegriff der Fertigung greift nicht</div>
+        <div class="warnung">Softwarequalität ist SUBJEKTIV — nie 'objektiv' ankreuzen!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Standards</div>
+        <div class="item"><b>Produktstandards</b> = Dokumentations-, Kodierungsstandards</div>
+        <div class="item"><b>Prozessstandards</b> = Spezifikations-, Design-, Validierungsprozesse</div>
+        <div class="item"><b>ISO 9001</b> = internationales Normenwerk, Qualitätshandbuch, ursprünglich 1987</div>
+        <div class="warnung">ISO-9001-Zertifizierung garantiert NICHT bessere Software!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Reviews & Inspektionen</div>
+        <div class="item"><b>3 Phasen:</b> Pre-Review → Review-Meeting (~2h) → Post-Review</div>
+        <div class="item"><b>Review-Team:</b> 3–4 Personen</div>
+        <div class="item"><b>Ziel:</b> Qualitätsverbesserung — NICHT Mitarbeiterbewertung!</div>
+        <div class="item"><b>Software-Inspektionen</b> = Peer-Reviews, zeilenweise Code-Überprüfung</div>
+        <div class="item"><b>Agil:</b> Scrum = Review je Iteration · XP = Pair Programming als laufende Überprüfung</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F10 -->
+  <div class="chapter" data-tags="konfigurationsmanagement change management versionsmanagement git release building">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#E0F7FA;color:#006064;">F10</span>
+        <span class="chapter-name">Software Konfigurationsmanagement</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="section">
+        <div class="section-title">4 Hauptprozesse</div>
+        <div class="esel">CVSR — Change · Versions · System Building · Release</div>
+        <div class="item"><b>Change-Management</b> = Änderungen steuern</div>
+        <div class="item"><b>Versionsmanagement</b> = Versionen nachverfolgen</div>
+        <div class="item"><b>System Building</b> = Komponenten zusammensetzen</div>
+        <div class="item"><b>Release-Management</b> = Software für den Release vorbereiten</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Change-Management</div>
+        <div class="item"><b>CRF (Change Request Form)</b> = gemeinsames Dokument, ständig aktualisiert</div>
+        <div class="item"><b>Change Control Board</b> = unabhängige Gruppe, entscheidet geschäftlich (nicht technisch)</div>
+        <div class="item">5 Entscheidungsfaktoren: Konsequenz · Vorteile · Betroffene User · Kosten · Release-Zyklus</div>
+        <div class="item"><b>Derivation History</b> = Änderungshistorie im Quellcode-Kommentar</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Versionsmanagement</div>
+        <div class="item"><b>Codeline</b> = Abfolge der Versionen einer Komponente</div>
+        <div class="item"><b>Baseline</b> = Definition eines kompletten Systems (alle Versionen)</div>
+        <div class="item"><b>Tools:</b> Git · Subversion · CVS · Mercurial</div>
+        <div class="item">check in / check out → Branches → Merging</div>
+        <div class="warnung">Git/Subversion können MIT agiler Entwicklung verwendet werden!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">System Building</div>
+        <div class="item">3 Plattformen: <b>Entwicklungssystem · Build-Server · Zielumgebung</b></div>
+        <div class="item"><b>Continuous Integration:</b> Mainline prüfen → bauen → testen → einchecken → Build-Server → neue Baseline</div>
+        <div class="item">Ziel: komplettes System mit einem Befehl/Klick</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Release-Management</div>
+        <div class="table-wrap"><table>
+          <tr><th>Typ</th><th>Inhalt</th><th>Kosten</th></tr>
+          <tr><td><b>Major Release</b></td><td>Neue Funktionalität</td><td>meist kostenpflichtig</td></tr>
+          <tr><td><b>Minor Release</b></td><td>Fehlerbehebung</td><td>meist kostenlos</td></tr>
+        </table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F11 -->
+  <div class="chapter" data-tags="lifecycle lebenszyklus stakeholder tco total cost ownership management">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#EDE7F6;color:#4A148C;">F11</span>
+        <span class="chapter-name">Life Cycle & Stakeholder Management</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="section">
+        <div class="section-title">8 Lebenszyklusphasen</div>
+        <div class="item">Initiation → Machbarkeitsstudie → Anforderungsanalyse → Systemdesign → System Build → Systemimplementierung → Maintenance → System Kill</div>
+        <div class="item"><b>Maintenance:</b> Unproduktiv (Fehlerbehebung) vs. Produktiv (neue Funktionen)</div>
+        <div class="item"><b>System Kill</b> = Fokus auf Datenmigration</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">TCO (Total Cost of Ownership)</div>
+        <div class="item">Zeigt Systemnutzung, Systemnutzen und Systemkosten über die <b>gesamte Lebensdauer</b></div>
+        <div class="item">NICHT nur Anschaffungs-/Entwicklungskosten!</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Stakeholder</div>
+        <div class="item">Einzelpersonen oder Organisationen die <b>aktiv beteiligt</b> sind oder deren <b>Interessen betroffen</b> sind</div>
+        <div class="item">Analyse am wichtigsten zu <b>Projektbeginn</b> — Stakeholder haben dann größten Einfluss</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Stakeholder-Analyse — 4 Schritte</div>
+        <div class="item"><b>1.</b> Identifikation (Brainstorming, Organigramme)</div>
+        <div class="item"><b>2.</b> Systemlandkarte (visuelle Darstellung der Beziehungen)</div>
+        <div class="item"><b>3.</b> Analysetabelle (Macht & Einfluss)</div>
+        <div class="item"><b>4.</b> Analyseraster (grafische Visualisierung)</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Umgang mit Stakeholdern (Power/Interest-Grid)</div>
+        <div class="table-wrap"><table>
+          <tr><th>Einfluss</th><th>Interesse</th><th>Strategie</th></tr>
+          <tr><td>Groß</td><td>Hoch</td><td>Stark einbeziehen, höchste Priorität</td></tr>
+          <tr><td>Groß</td><td>Niedrig</td><td>Zufriedenstellen, nicht langweilen</td></tr>
+          <tr><td>Gering</td><td>Hoch</td><td>Informieren, persönlicher Kontakt</td></tr>
+          <tr><td>Gering</td><td>Niedrig</td><td>Beobachten, wenig Kommunikation</td></tr>
+        </table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MC FALLEN -->
+  <div class="chapter" data-tags="mc falle klausur tipps always never immer">
+    <div class="chapter-header" onclick="toggle(this)">
+      <div class="chapter-title">
+        <span class="folio-badge" style="background:#FFEBEE;color:#B71C1C;">⚠️</span>
+        <span class="chapter-name">TOP MC-Fallen aus den Altklausuren</span>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="chapter-body">
+      <div class="warnung">"always/immer/never/nie/garantiert" in MC → meist FALSCH!</div>
+      <div class="warnung">MVC ≠ Repository ≠ Layered — häufigste Verwechslung!</div>
+      <div class="warnung">Wasserfall: KEIN Feedback, KEIN Inkrement, plangetrieben!</div>
+      <div class="warnung">Softwarequalität ist SUBJEKTIV — nie "objektiv" ankreuzen!</div>
+      <div class="warnung">Scrum Master ≠ Projektmanager — er ist ein Coach!</div>
+      <div class="warnung">Prototyp wird weggeworfen · Inkrement ist Teil des finalen Systems!</div>
+      <div class="warnung">Mehr Leute ≠ schneller (Kommunikations-Overhead)!</div>
+      <div class="warnung">ISO-9001 ≠ bessere Software garantiert!</div>
+      <div class="warnung">Ethnographie = Beobachtung, KEIN Interview!</div>
+      <div class="warnung">Kontextmodell zeigt NICHT die Art der Beziehungen!</div>
+      <div class="warnung">Schnelle Antwortzeiten = NICHT-funktional!</div>
+      <div class="warnung">Fernseher/PC = technisch (NICHT soziotechnisch)!</div>
+      <div class="warnung">Git/Subversion funktionieren MIT agiler Entwicklung!</div>
+      <div class="warnung">Validierung = Kundenanforderungen erfüllt? (NICHT technisch testen!)</div>
+    </div>
+  </div>
+
+</div>
+
+
+<div id="aq-container">
+  <div class="aq-search-wrap">
+    <input class="aq-search-box" type="text" id="aqInput" placeholder="🔍 Fragen suchen…" oninput="debouncedAqSearch(this.value)">
+  </div>
+  <div class="aq-filters">
+    <button class="aq-filter-btn active" data-src="all" onclick="aqSetFilter('all',this)">Alle (70)</button>
+    <button class="aq-filter-btn" data-src="K1" onclick="aqSetFilter('K1',this)">Klausur 1</button>
+    <button class="aq-filter-btn" data-src="K2" onclick="aqSetFilter('K2',this)">Klausur 2</button>
+    <button class="aq-filter-btn" data-src="extra" onclick="aqSetFilter('extra',this)">Zusatzfragen</button>
+  </div>
+  <div class="aq-lang-row">
+    <button class="aq-lang-btn active" id="lang-de" onclick="aqSetLang('de')">DE</button>
+    <button class="aq-lang-btn" id="lang-en" onclick="aqSetLang('en')">EN</button>
+  </div>
+  <div class="aq-count" id="aqCount"></div>
+  <div id="aq-list"></div>
+</div>
+
+<div class="search-nav" id="searchNav">
+  <span class="count" id="navCount">1 / 1</span>
+  <div class="nav-btns">
+    <button onclick="navMatch(-1)" aria-label="Vorheriger Treffer">▲</button>
+    <button onclick="navMatch(1)" aria-label="Nächster Treffer">▼</button>
+    <button class="close-btn" onclick="clearSearch()" aria-label="Suche schließen">✕</button>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="scrollToTop()" aria-label="Nach oben scrollen">↑</button>
+
+<script>
+function toggle(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('.arrow');
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+let allOpen = false;
+function toggleAll() {
+  allOpen = !allOpen;
+  document.querySelectorAll('.chapter-body').forEach(b => b.classList.toggle('open', allOpen));
+  document.querySelectorAll('.arrow').forEach(a => a.classList.toggle('open', allOpen));
+}
+
+let matches = [];
+let currentMatchIdx = -1;
+
+function updateMatches() {
+  matches = Array.from(document.querySelectorAll('mark.hl'));
+  currentMatchIdx = matches.length ? 0 : -1;
+  updateNavUI();
+  if (currentMatchIdx >= 0) matches[currentMatchIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function updateNavUI() {
+  const nav = document.getElementById('searchNav');
+  matches.forEach(m => m.classList.remove('current'));
+  if (matches.length > 0) {
+    nav.classList.add('show');
+    document.getElementById('navCount').textContent = (currentMatchIdx + 1) + ' / ' + matches.length;
+    matches[currentMatchIdx].classList.add('current');
+  } else {
+    nav.classList.remove('show');
+  }
+  evaluateBackToTop();
+}
+
+function navMatch(dir) {
+  if (!matches.length) return;
+  matches[currentMatchIdx].classList.remove('current');
+  currentMatchIdx = (currentMatchIdx + dir + matches.length) % matches.length;
+  matches[currentMatchIdx].classList.add('current');
+  document.getElementById('navCount').textContent = (currentMatchIdx + 1) + ' / ' + matches.length;
+  matches[currentMatchIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+  document.getElementById('searchInput').blur(); // Tastatur weg, mehr Platz zum Lesen
+}
+
+function clearSearch() {
+  const input = document.getElementById('searchInput');
+  input.value = '';
+  search('');
+  input.blur();
+}
+
+function evaluateBackToTop() {
+  const nav = document.getElementById('searchNav');
+  const btn = document.getElementById('backToTop');
+  const shouldShow = window.scrollY > 400 && !nav.classList.contains('show');
+  btn.classList.toggle('show', shouldShow);
+}
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+window.addEventListener('scroll', evaluateBackToTop, { passive: true });
+
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+let searchTimer = null;
+function debouncedSearch(val) {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => search(val), 120);
+}
+
+// Originaltext jedes Chapter-Body einmalig sichern, damit wir vor jeder
+// neuen Suche sauber zurücksetzen können (sonst stapeln sich die <mark>-Tags).
+const originalBodyHTML = new Map();
+const originalNameHTML = new Map();
+document.querySelectorAll('.chapter').forEach(ch => {
+  const body = ch.querySelector('.chapter-body');
+  const name = ch.querySelector('.chapter-name');
+  originalBodyHTML.set(body, body.innerHTML);
+  originalNameHTML.set(name, name.innerHTML);
+});
+
+// Markiert alle Vorkommen von query innerhalb von root, ohne bestehende
+// Tags (b, table, etc.) zu zerstören — läuft nur über reine Textknoten.
+function highlightIn(root, regex) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      if (!node.nodeValue || !regex.test(node.nodeValue)) return NodeFilter.FILTER_REJECT;
+      regex.lastIndex = 0;
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+  const targets = [];
+  let n;
+  while (n = walker.nextNode()) targets.push(n);
+
+  let count = 0;
+  targets.forEach(textNode => {
+    const text = textNode.nodeValue;
+    const frag = document.createDocumentFragment();
+    let lastIndex = 0;
+    let match;
+    regex.lastIndex = 0;
+    while ((match = regex.exec(text)) !== null) {
+      if (match.index > lastIndex) frag.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+      const mark = document.createElement('mark');
+      mark.className = 'hl';
+      mark.textContent = match[0];
+      frag.appendChild(mark);
+      count++;
+      lastIndex = match.index + match[0].length;
+      if (match[0].length === 0) regex.lastIndex++;
+    }
+    if (lastIndex < text.length) frag.appendChild(document.createTextNode(text.slice(lastIndex)));
+    textNode.parentNode.replaceChild(frag, textNode);
+  });
+  return count;
+}
+
+function search(val) {
+  const q = val.trim();
+  const qLower = q.toLowerCase();
+
+  document.querySelectorAll('.chapter').forEach(ch => {
+    const body = ch.querySelector('.chapter-body');
+    const name = ch.querySelector('.chapter-name');
+
+    // immer zuerst zurücksetzen, bevor neu markiert wird
+    body.innerHTML = originalBodyHTML.get(body);
+    name.innerHTML = originalNameHTML.get(name);
+
+    const tags = ch.dataset.tags || '';
+    const text = body.textContent.toLowerCase() + ' ' + name.textContent.toLowerCase();
+    const match = tags.includes(qLower) || text.includes(qLower);
+    ch.style.display = match || !q ? 'block' : 'none';
+
+    if (match && q) {
+      body.classList.add('open');
+      ch.querySelector('.arrow').classList.add('open');
+      const regex = new RegExp(escapeRegex(q), 'gi');
+      highlightIn(name, regex);
+      highlightIn(body, regex);
+    }
+  });
+
+  updateMatches();
+}
+
+// ══ ALTKLAUSUREN JS ══════════════════════════════════════════════════════════
+const AQ_DATA = [{"id": "K1-01", "src": "K1", "de": "Vermeidung und Toleranz von Änderungen in der Softwareentwicklung können unterstützt werden durch:", "en": "Change avoidance and tolerance in software engineering can be supported through:", "opts": [{"de": "Strikte Spezifikation", "en": "Strict specification", "c": 0}, {"de": "Kontinuierliche Risikoanalyse", "en": "Continuous risk analysis", "c": 1}, {"de": "Inkrementelle Auslieferung", "en": "Incremental delivery", "c": 1, "n": "⚠️ K2 markiert als ✗"}, {"de": "Prototyping", "en": "Prototyping", "c": 1}]}, {"id": "K1-02", "src": "K1", "de": "Das Wasserfallmodell …", "en": "The Waterfall Model …", "opts": [{"de": "beinhaltet Rückkopplung von einer Phase zur anderen", "en": "involves feedback from one phase to another", "c": 1}, {"de": "liefert Software inkrementell aus", "en": "delivers software incrementally", "c": 0}, {"de": "ist ein planbasiertes Softwareprozessmodell", "en": "is a plan-driven software process model", "c": 1}, {"de": "ist ein agiles Prozessmodell", "en": "is an agile process model", "c": 0}]}, {"id": "K1-03", "src": "K1", "de": "Softwarequalität …", "en": "Software quality …", "opts": [{"de": "sollte jeden betreffen, der für die Softwareentwicklung verantwortlich ist", "en": "should concern everyone responsible for software engineering", "c": 1}, {"de": "ist NUR durch eine ISO-9000-Zertifizierung erreichbar", "en": "is ONLY achievable through an ISO 9000 certification", "c": 0}, {"de": "ist garantiert, wenn ein Software-Anforderungsdokument erstellt wird", "en": "is guaranteed if a software requirements document is created", "c": 0}, {"de": "ist objektiv", "en": "is objective", "c": 0}]}, {"id": "K1-04", "src": "K1", "de": "Welche Diagramme werden zur Beschreibung von Interaktionen verwendet (Interaktionsmodelle)?", "en": "Which diagrams are used to describe interactions (interaction models)?", "opts": [{"de": "Sequenzdiagramme", "en": "Sequence diagrams", "c": 1}, {"de": "Klassendiagramme", "en": "Class diagrams", "c": 0}, {"de": "Zustandsdiagramme", "en": "State diagrams", "c": 0}, {"de": "Anwendungsfalldiagramme (Use-Case-Diagramme)", "en": "Use Case diagrams", "c": 0, "n": "⚠️ Word-Klausur markiert als ✓ — beide PDF-Klausuren sagen ✗"}]}, {"id": "K1-05", "src": "K1", "de": "Eine Aggregation ist eine Art von Assoziation, die …", "en": "An aggregation is a type of association that …", "opts": [{"de": "beschreibt, dass ein Objekt (das Ganze) aus anderen Objekten (Teilen) zusammengesetzt ist", "en": "describes that one object (the whole) is composed of other objects (parts)", "c": 1}, {"de": "eine Rautenform neben die Klasse setzt, die das Ganze repräsentiert", "en": "puts a diamond shape next to the class that represents the whole", "c": 1}, {"de": "einen Pfeilkopf verwendet, der auf ein übergeordnetes Objekt zeigt", "en": "uses an arrow head to point to a parent object", "c": 0}, {"de": "definiert, dass ein Objekt von einem anderen Objekt erbt", "en": "defines that an object inherits from another object", "c": 0}]}, {"id": "K1-06", "src": "K1", "de": "Softwareprojektkosten …", "en": "Software project costs …", "opts": [{"de": "sind immer höher als der Preis, für den die Software verkauft wird", "en": "are always higher than the price the software is sold for", "c": 0}, {"de": "umfassen Hardwarekosten", "en": "include hardware costs", "c": 1}, {"de": "umfassen Softwarekosten", "en": "include software costs", "c": 1}, {"de": "umfassen Reise- und Schulungskosten", "en": "include travel and training costs", "c": 1}]}, {"id": "K1-07", "src": "K1", "de": "Welche Aussagen zur Softwareprojektplanung sind richtig?", "en": "Which statements about software project planning are true?", "opts": [{"de": "Meilensteine haben üblicherweise Deliverables, die mit ihnen verbunden sind", "en": "Milestones usually have deliverables associated with them", "c": 1}, {"de": "Doppelt so viele Personen fertigstellen die Implementierung immer in der halben Zeit", "en": "Twice as many people will always finish the implementation in half the time", "c": 0}, {"de": "Um den Preis zu berechnen, addiert man die Kosten und eine definierte Gewinnspanne", "en": "To calculate the price, add the costs and a defined profit margin", "c": 1}, {"de": "Scrum ist ein Projektmanagement-Ansatz für agile Entwicklung", "en": "Scrum is a project management approach for agile development", "c": 1}]}, {"id": "K1-08", "src": "K1", "de": "Welche der folgenden sind funktionale Anforderungen?", "en": "Which of the following are functional requirements?", "opts": [{"de": "Benutzer ihr eigenes Konto erstellen lassen", "en": "Let users create their own account", "c": 1}, {"de": "Die Website benutzbar machen", "en": "Make the website usable", "c": 0}, {"de": "Verschiedene Formatierungsoptionen anbieten", "en": "Offer various formatting options", "c": 1}, {"de": "Schnelle Antwortzeiten garantieren", "en": "Guarantee fast response times", "c": 0}]}, {"id": "K1-09", "src": "K1", "de": "Das Model-View-Controller-Muster …", "en": "The Model-View-Controller pattern …", "opts": [{"de": "verwendet ein zentrales Repository, um den Datenfluss zwischen Komponenten zu reduzieren", "en": "uses a central repository to reduce data flow between components", "c": 0}, {"de": "trennt Daten und Funktionalität eines Systems von seiner visuellen Erscheinung", "en": "separates data and functionality from its visual appearance", "c": 1}, {"de": "ist die Grundlage für Interaktionsmanagement in vielen webbasierten Systemen", "en": "is the basis for interaction management in many web-based systems", "c": 1}, {"de": "beschreibt eine Reihe von Schichten, durch die Befehle und Daten weitergegeben werden", "en": "describes a set of layers through which commands and data are passed", "c": 0}]}, {"id": "K1-10", "src": "K1", "de": "Generische Software …", "en": "Generic software …", "opts": [{"de": "ist immer Open Source", "en": "is always open source", "c": 0}, {"de": "beinhaltet üblicherweise Dokumentation", "en": "usually includes documentation", "c": 1}, {"de": "ist üblicherweise Gegenstand einer offenen Vertragsausschreibung", "en": "is usually subject to an open contract competition", "c": 0}, {"de": "wird für den Massenmarkt entwickelt", "en": "is developed for the mass market", "c": 1}]}, {"id": "K1-11", "src": "K1", "de": "Welche Beispiele stellen ein soziotechnisches System dar?", "en": "Which examples represent a socio-technical system?", "opts": [{"de": "Ein Personal Computer", "en": "A personal computer", "c": 0}, {"de": "Ein Fernsehgerät", "en": "A TV set", "c": 0}, {"de": "Ein soziales Netzwerk für Unternehmen", "en": "An enterprise social network", "c": 1}, {"de": "Ein Unternehmen, das Technologie nutzt, um Bücher zu veröffentlichen", "en": "A company that uses technology to publish books", "c": 1}]}, {"id": "K1-12", "src": "K1", "de": "Das Systemanforderungsdokument (Pflichtenheft) …", "en": "The system requirements document (Pflichtenheft) …", "opts": [{"de": "definiert die Pflichten des Kunden", "en": "defines the duties of the client", "c": 0}, {"de": "dient als vertragliche Grundlage zwischen Auftragnehmer und Kunde", "en": "serves as a contractual basis between contractor and client", "c": 1}, {"de": "enthält die detaillierten Benutzeranforderungen", "en": "includes the detailed user requirements", "c": 1}, {"de": "definiert, was der Auftragnehmer zu erstellen hat", "en": "defines what the contractor has to build", "c": 1}]}, {"id": "K1-13", "src": "K1", "de": "Professionelle Softwareentwicklung befasst sich mit …", "en": "Professional software development deals with …", "opts": [{"de": "der Entwicklung einer Textverarbeitung für kleine und mittlere Unternehmen", "en": "the development of a word processing software for small and medium sized enterprises", "c": 1}, {"de": "der Entwicklung komplexer Excel-Tabellen", "en": "the development of complex Excel tables", "c": 0}, {"de": "der Entwicklung einer komplexen Formatvorlage für Microsoft Word", "en": "the development of a complex style sheet template for Microsoft Word", "c": 0}, {"de": "der Entwicklung einer persönlichen Website", "en": "the development of a personal website", "c": 0}]}, {"id": "K1-14", "src": "K1", "de": "Welche Fragen werden zur Sicherstellung der Softwarequalität verwendet?", "en": "Which questions are used to ensure software quality?", "opts": [{"de": "Kann ein Benutzer ein eigenes Konto erstellen?", "en": "Can a user create his/her own user account?", "c": 0}, {"de": "Erfüllt die Software das Anforderungsspezifikationsdokument?", "en": "Does the software comply with the requirements specification document?", "c": 1}, {"de": "Ist die Software benutzbar?", "en": "Is the software usable?", "c": 1}, {"de": "Wurde die Software ordnungsgemäß getestet?", "en": "Has the software been properly tested?", "c": 1}]}, {"id": "K1-15", "src": "K1", "de": "Der soziotechnische System-Stack …", "en": "The socio-technical system stack …", "opts": [{"de": "konzentriert sich auf den Bau von Softwarekomponenten", "en": "focuses on building software components", "c": 0}, {"de": "gilt NUR für soziale Medien", "en": "ONLY applies to social media", "c": 0}, {"de": "umfasst Hardware, Software und Menschen", "en": "involves hardware, software and people", "c": 1}, {"de": "erweitert die Softwareentwicklung durch verschiedene soziale Schichten", "en": "expands software engineering through various social layers", "c": 1}]}, {"id": "K1-16", "src": "K1", "de": "Versionsverwaltungswerkzeuge wie Subversion oder GIT …", "en": "Version management tools such as Subversion or GIT …", "opts": [{"de": "können nicht für agile Entwicklung verwendet werden", "en": "cannot be used for agile development", "c": 0}, {"de": "erlauben Entwicklern, gleichzeitig an denselben Komponenten zu arbeiten", "en": "allow developers to work on the same components at the same time", "c": 1}, {"de": "sind sehr teuer", "en": "are very expensive", "c": 0}, {"de": "zeichnen die Änderungshistorie einer Software auf", "en": "record the change history of a software", "c": 1}]}, {"id": "K1-17", "src": "K1", "de": "Eine angemessene System-/Softwarearchitektur …", "en": "An appropriate system/software architecture …", "opts": [{"de": "ermöglicht die großflächige Wiederverwendung des Systems und seiner Komponenten", "en": "allows for large-scale reuse of the system and its components", "c": 1, "n": "⚠️ Word-Klausur markiert als ✗ — beide PDF-Klausuren sagen ✓"}, {"de": "kann als Mittel zur Strukturierung von Diskussionen mit Kunden, Entwicklern und Managern dienen", "en": "can serve as a means for structuring discussions with clients, developers and managers", "c": 1}, {"de": "unterstützt die nicht-funktionalen Anforderungen eines Systems", "en": "supports the non-functional requirements of a system", "c": 1}, {"de": "ist notwendig, um die funktionalen Anforderungen eines Systems zu erfüllen", "en": "is necessary to meet the functional requirements of a system", "c": 0}]}, {"id": "K1-18", "src": "K1", "de": "Was umfasst das Stakeholder-Management im Systementwicklungslebenszyklus?", "en": "What does stakeholder management include within a systems development lifecycle?", "opts": [{"de": "Eine Definition, wie das angestrebte System in Schlüsselbereichen funktionieren wird", "en": "A definition on how the envisaged system will work in key areas", "c": 0}, {"de": "Eine Bewertung von Macht und Einfluss relevanter Einzelpersonen und Gruppen", "en": "An assessment of power and influence of relevant individuals and groups", "c": 1}, {"de": "Eine Identifikation von Schlüsselpersonen und ihren Interessen", "en": "An identification of key people and their interests", "c": 1}, {"de": "Eine Entwicklung von Strategien zur Stärkung der Beteiligung ausgewählter Personen", "en": "A development of strategies for strengthening participation and commitment", "c": 1, "n": "⚠️ Word-Klausur markiert als ✗ — beide PDF-Klausuren sagen ✓"}]}, {"id": "K1-19", "src": "K1", "de": "Welche Prinzipien gelten für die agile Softwareentwicklung?", "en": "Which principles apply to agile software development?", "opts": [{"de": "Inkrementelle Auslieferung", "en": "Incremental delivery", "c": 1}, {"de": "Menschen statt Prozesse", "en": "People not process", "c": 1}, {"de": "Änderungen verbieten", "en": "Prohibit change", "c": 0}, {"de": "Einfachheit bewahren (Maintain Simplicity)", "en": "Maintain simplicity", "c": 1}]}, {"id": "K1-20", "src": "K1", "de": "Software-Konfigurationsmanagement …", "en": "Software configuration management …", "opts": [{"de": "befasst sich mit der Evolution eines Systems/einer Software", "en": "is concerned with the evolution of a system/software", "c": 1}, {"de": "ist NUR für große Softwareanbieter wichtig", "en": "is ONLY important for large software vendors", "c": 0}, {"de": "hilft, die verschiedenen Versionen einer Software zu handhaben", "en": "helps you handle the different versions of a software", "c": 1}, {"de": "umfasst Änderungsmanagement, Versionsmanagement, System-Building und Release-Management", "en": "includes change management, version management, system building, and release management", "c": 1}]}, {"id": "K2-01", "src": "K2", "de": "Softwareprojektkosten …", "en": "Software project costs …", "opts": [{"de": "umfassen Hardwarekosten", "en": "include hardware costs", "c": 1}, {"de": "umfassen Reise- und Schulungskosten", "en": "include travel and training costs", "c": 1}, {"de": "sind immer höher als der Preis, für den die Software verkauft wird", "en": "are always higher than the price the software is sold for", "c": 0}, {"de": "umfassen Softwarekosten", "en": "include software costs", "c": 1}]}, {"id": "K2-02", "src": "K2", "de": "Requirements Engineering (Anforderungsanalyse) …", "en": "Requirements engineering …", "opts": [{"de": "befasst sich NUR mit funktionalen Anforderungen", "en": "deals ONLY with functional requirements", "c": 0}, {"de": "führt zum Software-/Systemanforderungsdokument", "en": "leads to the software/system requirements document", "c": 1}, {"de": "befasst sich sowohl mit funktionalen als auch mit nicht-funktionalen Anforderungen", "en": "deals with both functional and non-functional requirements", "c": 1}, {"de": "befasst sich NUR mit nicht-funktionalen Anforderungen", "en": "deals ONLY with non-functional requirements", "c": 0}]}, {"id": "K2-03", "src": "K2", "de": "Das Model-View-Controller-Muster …", "en": "The Model-View-Controller pattern …", "opts": [{"de": "verwendet ein zentrales Repository, um den Datenfluss zu reduzieren", "en": "uses a central repository to reduce data flow between components", "c": 0}, {"de": "beschreibt eine Reihe von Schichten, durch die Befehle und Daten weitergegeben werden", "en": "describes a set of layers through which commands and data are passed", "c": 0}, {"de": "ist die Grundlage für Interaktionsmanagement in vielen webbasierten Systemen", "en": "is the basis for interaction management in many web-based systems", "c": 1}, {"de": "trennt Daten und Funktionalität eines Systems von seiner visuellen Erscheinung", "en": "separates data and functionality from its visual appearance", "c": 1}]}, {"id": "K2-04", "src": "K2", "de": "Der soziotechnische System-Stack …", "en": "The socio-technical system stack …", "opts": [{"de": "erweitert die Softwareentwicklung durch verschiedene soziale Schichten", "en": "expands software engineering through various social layers", "c": 1}, {"de": "umfasst Hardware, Software und Menschen", "en": "involves hardware, software and people", "c": 1}, {"de": "konzentriert sich auf Software-/Systementwicklung", "en": "focuses on software/system engineering", "c": 0}, {"de": "gilt NUR für soziale Medien", "en": "ONLY applies to social media", "c": 0}]}, {"id": "K2-05", "src": "K2", "de": "Welche der folgenden sind funktionale Anforderungen?", "en": "Which of the following are functional requirements?", "opts": [{"de": "Schnelle Antwortzeiten garantieren", "en": "Guarantee fast response times", "c": 0}, {"de": "Die Website benutzbar machen", "en": "Make the website usable", "c": 0}, {"de": "Benutzer ihr eigenes Konto erstellen lassen", "en": "Let users create their own account", "c": 1}, {"de": "Verschiedene Formatierungsoptionen anbieten", "en": "Offer various formatting options", "c": 1}]}, {"id": "K2-06", "src": "K2", "de": "Eine angemessene System-/Softwarearchitektur …", "en": "An appropriate system/software architecture …", "opts": [{"de": "unterstützt die nicht-funktionalen Anforderungen eines Systems", "en": "supports the non-functional requirements of a system", "c": 1}, {"de": "kann als Mittel zur Strukturierung von Diskussionen dienen", "en": "can serve as a means for structuring discussions", "c": 1}, {"de": "ermöglicht die großflächige Wiederverwendung des Systems und seiner Komponenten", "en": "allows for large-scale reuse of the system and its components", "c": 1, "n": "⚠️ Word-Klausur markiert als ✗ — beide PDF-Klausuren sagen ✓"}, {"de": "ist notwendig, um die funktionalen Anforderungen eines Systems zu erfüllen", "en": "is necessary to meet the functional requirements of a system", "c": 0}]}, {"id": "K2-07", "src": "K2", "de": "Vermeidung und Toleranz von Änderungen können unterstützt werden durch:", "en": "Change avoidance and tolerance can be supported through:", "opts": [{"de": "Strikte Spezifikation", "en": "Strict specification", "c": 0}, {"de": "Prototyping", "en": "Prototyping", "c": 1}, {"de": "Kontinuierliche Risikoanalyse", "en": "Continuous risk analysis", "c": 1}, {"de": "Inkrementelle Auslieferung", "en": "Incremental delivery", "c": 0, "n": "⚠️ K1 markiert als ✓ — hier als ✗"}]}, {"id": "K2-08", "src": "K2", "de": "Welche Diagramme beschreiben Interaktionen (Interaktionsmodelle)?", "en": "Which diagrams describe interactions (interaction models)?", "opts": [{"de": "Klassendiagramme", "en": "Class diagrams", "c": 0}, {"de": "Anwendungsfalldiagramme (Use-Case-Diagramme)", "en": "Use Case diagrams", "c": 0, "n": "⚠️ Word-Klausur markiert als ✓ — beide PDF-Klausuren sagen ✗"}, {"de": "Zustandsdiagramme", "en": "State diagrams", "c": 0}, {"de": "Sequenzdiagramme", "en": "Sequence diagrams", "c": 1}]}, {"id": "K2-09", "src": "K2", "de": "Das Wasserfallmodell …", "en": "The Waterfall Model …", "opts": [{"de": "beinhaltet Rückkopplung von einer Phase zur anderen", "en": "involves feedback from one phase to another", "c": 1}, {"de": "liefert Software inkrementell aus", "en": "delivers software incrementally", "c": 0}, {"de": "ist ein agiles Prozessmodell", "en": "is an agile process model", "c": 0}, {"de": "ist ein planbasiertes Softwareprozessmodell", "en": "is a plan-driven software process model", "c": 1}]}, {"id": "K2-10", "src": "K2", "de": "Softwarequalität …", "en": "Software quality …", "opts": [{"de": "sollte jeden betreffen, der für die Softwareentwicklung verantwortlich ist", "en": "should concern everyone responsible for software engineering", "c": 1}, {"de": "ist garantiert, wenn ein Software-Anforderungsdokument erstellt wird", "en": "is guaranteed if a software requirements document is created", "c": 0}, {"de": "ist subjektiv", "en": "is subjective", "c": 1}, {"de": "ist NUR durch eine ISO-9000-Zertifizierung erreichbar", "en": "is ONLY achievable through an ISO 9000 certification", "c": 0}]}, {"id": "K2-11", "src": "K2", "de": "Welche Fragen werden zur Sicherstellung der Softwarequalität verwendet?", "en": "Which questions are used to ensure software quality?", "opts": [{"de": "Wurde die Software ordnungsgemäß getestet?", "en": "Has the software been properly tested?", "c": 1}, {"de": "Wurden Programmier- und Dokumentationsstandards eingehalten?", "en": "Have programming and documentation standards been followed?", "c": 1}, {"de": "Ist die Software benutzbar?", "en": "Is the software usable?", "c": 1}, {"de": "Kann ein Benutzer ein eigenes Konto erstellen?", "en": "Can a user create his/her own user account?", "c": 0}]}, {"id": "K2-12", "src": "K2", "de": "Was umfasst das Stakeholder-Management im Systementwicklungslebenszyklus?", "en": "What does stakeholder management include within a systems development lifecycle?", "opts": [{"de": "Eine Entwicklung von Strategien zur Stärkung der Beteiligung ausgewählter Personen", "en": "A development of strategies for strengthening participation and commitment", "c": 1, "n": "⚠️ Word-Klausur markiert als ✗ — beide PDF-Klausuren sagen ✓"}, {"de": "Eine Identifikation von Schlüsselpersonen und ihren Interessen", "en": "An identification of key people and their interests", "c": 1}, {"de": "Eine Bewertung von Macht und Einfluss relevanter Einzelpersonen und Gruppen", "en": "An assessment of power and influence of relevant individuals and groups", "c": 1}, {"de": "Eine Definition, wie das angestrebte System in Schlüsselbereichen funktionieren wird", "en": "A definition on how the envisaged system will work in key areas", "c": 0}]}, {"id": "K2-13", "src": "K2", "de": "Software-Konfigurationsmanagement …", "en": "Software configuration management …", "opts": [{"de": "ist NUR für große Softwareanbieter wichtig", "en": "is ONLY important for large software vendors", "c": 0}, {"de": "umfasst Änderungsmanagement, Versionsmanagement, System-Building und Release-Management", "en": "includes change management, version management, system building, and release management", "c": 1}, {"de": "hilft, die verschiedenen Versionen einer Software zu handhaben", "en": "helps you handle the different versions of a software", "c": 1}, {"de": "befasst sich mit der Evolution eines Systems/einer Software", "en": "is concerned with the evolution of a system/software", "c": 1}]}, {"id": "K2-14", "src": "K2", "de": "Agile Softwareentwicklung …", "en": "Agile software development …", "opts": [{"de": "ist immer schneller als planbasierte Entwicklung", "en": "is always faster than plan-driven development", "c": 0}, {"de": "ist besser geeignet für kleine und mittelgroße Projekte", "en": "is better suitable for small and mid-sized projects", "c": 1}, {"de": "ist der Standardansatz für die Softwareentwicklung", "en": "is the standard approach for developing software", "c": 0}, {"de": "erfordert mehr Input von und Zusammenarbeit mit dem Kunden", "en": "requires more input from and collaboration with the client", "c": 1}]}, {"id": "K2-15", "src": "K2", "de": "Welche der folgenden Aufgaben sind NICHT Teil des Softwareprozesses?", "en": "Which of the following tasks are NOT part of the software process?", "opts": [{"de": "Softwarespezifikation", "en": "Software Specification", "c": 0}, {"de": "Softwarevalidierung", "en": "Software Validation", "c": 0}, {"de": "Softwareevolution", "en": "Software Evolution", "c": 0}, {"de": "Softwareschulung", "en": "Software Training", "c": 1}]}, {"id": "K2-16", "src": "K2", "de": "Welche Beispiele stellen ein soziotechnisches System dar?", "en": "Which examples represent a socio-technical system?", "opts": [{"de": "Ein soziales Netzwerk für Unternehmen", "en": "An enterprise social network", "c": 1}, {"de": "Ein Fernsehgerät", "en": "A TV set", "c": 0}, {"de": "Ein Buchverlagsunternehmen", "en": "A book publishing company", "c": 1}, {"de": "Ein Personal Computer", "en": "A personal computer", "c": 0}]}, {"id": "K2-17", "src": "K2", "de": "Versionsverwaltungswerkzeuge wie Subversion oder GIT …", "en": "Version management tools such as Subversion or GIT …", "opts": [{"de": "erlauben Entwicklern, gleichzeitig an denselben Komponenten zu arbeiten", "en": "allow developers to work on the same components at the same time", "c": 1}, {"de": "zeichnen die Änderungshistorie einer Software auf", "en": "record the change history of a software", "c": 1}, {"de": "sind sehr teuer", "en": "are very expensive", "c": 0}, {"de": "können nicht für agile Entwicklung verwendet werden", "en": "cannot be used for agile development", "c": 0}]}, {"id": "K2-18", "src": "K2", "de": "Eine Aggregation ist eine Art von Assoziation, die …", "en": "An aggregation is a type of association that …", "opts": [{"de": "eine Rautenform neben die Klasse setzt, die das Ganze repräsentiert", "en": "puts a diamond shape next to the class that represents the whole", "c": 1}, {"de": "einen Pfeilkopf verwendet, der auf ein übergeordnetes Objekt zeigt", "en": "uses an arrow head to point to a parent object", "c": 0}, {"de": "beschreibt, dass ein Objekt (das Ganze) aus anderen Objekten (Teilen) zusammengesetzt ist", "en": "describes that one object (the whole) is composed of other objects (parts)", "c": 1}, {"de": "definiert, dass ein Objekt von einem anderen Objekt erbt", "en": "defines that an object inherits from another object", "c": 0}]}, {"id": "K2-19", "src": "K2", "de": "Welche Aussagen zur Softwareprojektplanung sind richtig?", "en": "Which statements about software project planning are true?", "opts": [{"de": "Scrum ist ein Projektmanagement-Ansatz für agile Entwicklung", "en": "Scrum is a project management approach for agile development", "c": 1}, {"de": "Um den Preis zu berechnen, addiert man die Kosten und 10% Gewinn", "en": "To calculate the price, add the costs and 10% profit", "c": 0}, {"de": "Doppelt so viele Personen fertigstellen die Implementierung immer in der halben Zeit", "en": "Twice as many people will always finish the implementation in half the time", "c": 0}, {"de": "Meilensteine haben üblicherweise Deliverables, die mit ihnen verbunden sind", "en": "Milestones usually have deliverables associated with them", "c": 1}]}, {"id": "K2-20", "src": "K2", "de": "Welche Prinzipien gelten für die agile Softwareentwicklung?", "en": "Which principles apply to agile software development?", "opts": [{"de": "Menschen statt Prozesse", "en": "People not process", "c": 1}, {"de": "Komplexität bewahren", "en": "Maintain complexity", "c": 0}, {"de": "Änderungen begrüßen (Embrace change)", "en": "Embrace change", "c": 1}, {"de": "Inkrementelle Auslieferung", "en": "Incremental delivery", "c": 1}]}, {"id": "ZS-01", "src": "extra", "de": "Welche der folgenden sind generische Softwareprozessmodelle (Prozessparadigmen)?", "en": "Which of the following are generic software process models (process paradigms)?", "opts": [{"de": "Das Wasserfallmodell", "en": "The Waterfall model", "c": 1}, {"de": "Agile (inkrementelle) Softwareentwicklung", "en": "Agile (incremental) software development", "c": 1}, {"de": "Reuse-orientierte (komponentenbasierte) Entwicklung", "en": "Reuse-oriented (component-based) development", "c": 1}, {"de": "Stakeholder-Analyse", "en": "Stakeholder analysis", "c": 0}]}, {"id": "ZS-02", "src": "extra", "de": "Das Wasserfallmodell sollte vorzugsweise eingesetzt werden, wenn …", "en": "The Waterfall model should preferably be used when …", "opts": [{"de": "die Anforderungen klar verstanden sind und sich kaum ändern", "en": "requirements are well understood and unlikely to change", "c": 1}, {"de": "sich die Anforderungen während des Projekts häufig ändern", "en": "requirements change frequently during the project", "c": 0}, {"de": "der Prozess gut sichtbar und überwachbar sein soll", "en": "the process should be well visible and manageable", "c": 1}, {"de": "möglichst viele Iterationen über alle Phasen gewünscht sind", "en": "as many iterations as possible over all phases are desired", "c": 0}]}, {"id": "ZS-03", "src": "extra", "de": "Welche Aussagen treffen auf plangetriebene bzw. inkrementelle Prozesse zu?", "en": "Which statements apply to plan-driven vs. incremental processes?", "opts": [{"de": "Bei plangetriebenen Prozessen werden Aktivitäten im Voraus geplant und gegen den Plan gemessen", "en": "In plan-driven processes, activities are planned in advance and progress is measured against the plan", "c": 1}, {"de": "Inkrementelle Prozesse erleichtern den Umgang mit sich ändernden Kundenanforderungen", "en": "Incremental processes make it easier to deal with changing customer requirements", "c": 1}, {"de": "Plangetriebene und inkrementelle Ansätze schließen sich gegenseitig aus", "en": "Plan-driven and incremental approaches are mutually exclusive", "c": 0}, {"de": "Prozessstandardisierung kann die Kommunikation verbessern", "en": "Process standardization can improve communication", "c": 1}]}, {"id": "ZS-04", "src": "extra", "de": "Die reuse-orientierte Softwareentwicklung …", "en": "Reuse-oriented software development …", "opts": [{"de": "basiert auf bestehenden Komponenten", "en": "is based on existing components", "c": 1}, {"de": "legt den Fokus auf die Integration von Komponenten", "en": "focuses on component integration", "c": 1}, {"de": "entwickelt jedes System grundsätzlich von Grund auf neu", "en": "always develops every system from scratch", "c": 0}, {"de": "kann mit anderen Prozessmodellen kombiniert werden", "en": "can be combined with other process models", "c": 1}]}, {"id": "ZS-05", "src": "extra", "de": "Der Rational Unified Process (RUP) …", "en": "The Rational Unified Process (RUP) …", "opts": [{"de": "ist aus den Entwicklungen rund um UML abgeleitet", "en": "is derived from developments around UML", "c": 1}, {"de": "vereint Elemente verschiedener generischer Prozessmodelle", "en": "combines elements from various generic process models", "c": 1}, {"de": "unterstützt Prototyping und inkrementelle Auslieferung", "en": "supports prototyping and incremental delivery", "c": 1}, {"de": "ist ausschließlich ein plangetriebenes Wasserfallmodell", "en": "is exclusively a plan-driven waterfall model", "c": 0}]}, {"id": "ZS-06", "src": "extra", "de": "Welche gehören zu den vier fundamentalen Aktivitäten des Softwareprozesses?", "en": "Which belong to the four fundamental activities of the software process?", "opts": [{"de": "Software-Spezifikation", "en": "Software Specification", "c": 1}, {"de": "Software-Entwicklung (Design & Implementierung)", "en": "Software Development (Design & Implementation)", "c": 1}, {"de": "Software-Validierung", "en": "Software Validation", "c": 1}, {"de": "Software-Evolution", "en": "Software Evolution", "c": 1}]}, {"id": "ZS-07", "src": "extra", "de": "Software-Evolution …", "en": "Software Evolution …", "opts": [{"de": "bezeichnet die Anpassung bestehender Systeme an neue Anforderungen", "en": "refers to adapting existing systems to new requirements", "c": 1}, {"de": "ist notwendig, damit Software langfristig nützlich bleibt", "en": "is necessary for software to remain useful in the long term", "c": 1}, {"de": "findet nur einmalig am Projektende statt", "en": "takes place only once at the end of the project", "c": 0}, {"de": "macht Änderungen an bestehender Software überflüssig", "en": "makes changes to existing software unnecessary", "c": 0}]}, {"id": "ZS-08", "src": "extra", "de": "Extreme Programming (XP) ist gekennzeichnet durch …", "en": "Extreme Programming (XP) is characterized by …", "opts": [{"de": "Pair Programming", "en": "Pair Programming", "c": 1}, {"de": "das Schreiben von Tests vor dem funktionalen Code (Test-First)", "en": "writing tests before functional code (Test-First)", "c": 1}, {"de": "Anforderungen in Form von User Stories", "en": "requirements in the form of user stories", "c": 1}, {"de": "ein umfangreiches Up-front-Pflichtenheft als zentrale Grundlage", "en": "a comprehensive up-front requirements document as central foundation", "c": 0}]}, {"id": "ZS-09", "src": "extra", "de": "Welche Aussagen über Scrum-Rollen sind korrekt?", "en": "Which statements about Scrum roles are correct?", "opts": [{"de": "Der Product Owner ist für Businessentscheidungen und Priorisierung verantwortlich", "en": "The Product Owner is responsible for business decisions and prioritization", "c": 1}, {"de": "Der Scrum Master agiert als Coach und achtet auf die Einhaltung der Regeln", "en": "The Scrum Master acts as a coach and ensures the rules are followed", "c": 1}, {"de": "Das Scrum Team ist das Entwicklungsteam", "en": "The Scrum Team is the development team", "c": 1}, {"de": "Der Scrum Master entscheidet allein über den Inhalt des Product Backlogs", "en": "The Scrum Master decides alone on the content of the Product Backlog", "c": 0}]}, {"id": "ZS-10", "src": "extra", "de": "Das Agile Manifest betont …", "en": "The Agile Manifesto emphasizes …", "opts": [{"de": "Individuen und Interaktionen über Prozesse und Werkzeuge", "en": "Individuals and interactions over processes and tools", "c": 1}, {"de": "funktionierende Software über umfassende Dokumentation", "en": "Working software over comprehensive documentation", "c": 1}, {"de": "Zusammenarbeit mit dem Kunden über Vertragsverhandlung", "en": "Customer collaboration over contract negotiation", "c": 1}, {"de": "das strikte Befolgen eines Plans über das Reagieren auf Veränderung", "en": "following a plan strictly over responding to change", "c": 0}]}, {"id": "ZS-11", "src": "extra", "de": "Warum ist die Skalierung agiler Methoden auf große Systeme schwierig?", "en": "Why is scaling agile methods to large systems difficult?", "opts": [{"de": "Große Systeme haben mehr Schnittstellen und Abhängigkeiten", "en": "Large systems have more interfaces and dependencies", "c": 1}, {"de": "Es ist mehr Up-front-Design (Architektur) nötig", "en": "More up-front design (architecture) is needed", "c": 1}, {"de": "Es wird mehr Dokumentation benötigt", "en": "More documentation is required", "c": 1}, {"de": "Große Systeme benötigen grundsätzlich keine stabile Architektur", "en": "Large systems do not fundamentally need a stable architecture", "c": 0}]}, {"id": "ZS-12", "src": "extra", "de": "Welche Aussagen zu Modellierungsperspektiven stimmen?", "en": "Which statements about modeling perspectives are correct?", "opts": [{"de": "Kontextmodelle zeigen die Grenzen des Systems und sein Umfeld", "en": "Context models show the system boundaries and its environment", "c": 1}, {"de": "Strukturmodelle zeigen den statischen Aufbau (z. B. Klassendiagramme)", "en": "Structural models show the static structure (e.g. class diagrams)", "c": 1}, {"de": "Verhaltensmodelle zeigen das dynamische Verhalten (z. B. Zustandsdiagramme)", "en": "Behavioral models show dynamic behavior (e.g. state diagrams)", "c": 1}, {"de": "Interaktionsmodelle beschreiben ausschließlich die Hardware eines Systems", "en": "Interaction models exclusively describe the hardware of a system", "c": 0}]}, {"id": "ZS-13", "src": "extra", "de": "Ein Kontextmodell …", "en": "A context model …", "opts": [{"de": "zeigt, was innerhalb und außerhalb der Systemgrenzen liegt", "en": "shows what is within and outside the system boundaries", "c": 1}, {"de": "hilft, den Umfang (Scope) eines Systems festzulegen", "en": "helps to define the scope of a system", "c": 1}, {"de": "beschreibt detailliert den internen Programmablauf", "en": "describes the internal program flow in detail", "c": 0}, {"de": "stellt dar, mit welchen anderen Systemen/Akteuren interagiert wird", "en": "shows which other systems/actors the system interacts with", "c": 1}]}, {"id": "ZS-14", "src": "extra", "de": "Welche der folgenden sind Verhaltensmodelle (zeigen dynamisches Verhalten)?", "en": "Which of the following are behavioral models (show dynamic behavior)?", "opts": [{"de": "Zustandsdiagramme modellieren eventgetriebenes Verhalten", "en": "State diagrams model event-driven behavior", "c": 1}, {"de": "Aktivitätsdiagramme modellieren datengetriebenes Verhalten", "en": "Activity diagrams model data-driven behavior", "c": 1}, {"de": "Klassendiagramme sind Verhaltensmodelle", "en": "Class diagrams are behavioral models", "c": 0}, {"de": "Sequenzdiagramme zählen zu den Verhaltensmodellen", "en": "Sequence diagrams belong to the behavioral models", "c": 0}]}, {"id": "ZS-15", "src": "extra", "de": "Die Vererbung (Generalisierung) in UML …", "en": "Inheritance (generalization) in UML …", "opts": [{"de": "wird durch einen Pfeil mit unausgefülltem Dreieckskopf zur Oberklasse dargestellt", "en": "is represented by an arrow with an unfilled triangle head to the parent class", "c": 1}, {"de": "beschreibt, dass ein Objekt von einem anderen erbt", "en": "describes that an object inherits from another", "c": 1}, {"de": "wird durch eine Raute an der Ganzes-Klasse dargestellt", "en": "is represented by a diamond at the whole class", "c": 0}, {"de": "ist identisch mit einer Aggregation", "en": "is identical to an aggregation", "c": 0}]}, {"id": "ZS-16", "src": "extra", "de": "Architekturmuster (Architectural Patterns) …", "en": "Architectural patterns …", "opts": [{"de": "sind erprobte, wiederverwendbare Lösungsschablonen für die Systemstruktur", "en": "are proven, reusable solution templates for system structure", "c": 1}, {"de": "liefern ein gemeinsames Vokabular für Entwurfsdiskussionen", "en": "provide a common vocabulary for design discussions", "c": 1}, {"de": "berücksichtigen Stärken und Schwächen bezüglich nicht-funktionaler Eigenschaften", "en": "consider strengths and weaknesses regarding non-functional properties", "c": 1}, {"de": "sind nur für sehr kleine Systeme relevant", "en": "are only relevant for very small systems", "c": 0}]}, {"id": "ZS-17", "src": "extra", "de": "Welche Aussagen über die Softwarearchitektur sind korrekt?", "en": "Which statements about software architecture are correct?", "opts": [{"de": "Sie beeinflusst maßgeblich nicht-funktionale Eigenschaften wie Performance und Zuverlässigkeit", "en": "It significantly influences non-functional properties like performance and reliability", "c": 1}, {"de": "Sie dient als Kommunikationsmittel zwischen Stakeholdern", "en": "It serves as a communication tool between stakeholders", "c": 1}, {"de": "Sie ermöglicht die Wiederverwendung von Systemkomponenten", "en": "It enables the reuse of system components", "c": 1}, {"de": "Sie ist für die Erfüllung funktionaler Anforderungen zwingend notwendig", "en": "It is absolutely necessary for meeting functional requirements", "c": 0}]}, {"id": "ZS-18", "src": "extra", "de": "Beim Model-View-Controller (MVC)-Muster gilt …", "en": "In the Model-View-Controller (MVC) pattern …", "opts": [{"de": "Das Model verwaltet Daten und Geschäftslogik", "en": "The Model manages data and business logic", "c": 1}, {"de": "Die View ist für die Darstellung der Daten zuständig", "en": "The View is responsible for displaying data", "c": 1}, {"de": "Der Controller verarbeitet Eingaben und vermittelt zwischen Model und View", "en": "The Controller processes inputs and mediates between Model and View", "c": 1}, {"de": "Die View verändert direkt die Geschäftslogik des Models", "en": "The View directly changes the business logic of the Model", "c": 0}]}, {"id": "ZS-19", "src": "extra", "de": "Emergente Eigenschaften soziotechnischer Systeme …", "en": "Emergent properties of socio-technical systems …", "opts": [{"de": "sind Eigenschaften des Gesamtsystems, nicht einzelner Komponenten", "en": "are properties of the overall system, not individual components", "c": 1}, {"de": "hängen von den Komponenten und ihren Beziehungen ab", "en": "depend on the components and their relationships", "c": 1}, {"de": "lassen sich vollständig aus einer einzelnen Komponente ableiten", "en": "can be fully derived from a single component", "c": 0}, {"de": "können Zuverlässigkeit oder Sicherheit des Gesamtsystems betreffen", "en": "can relate to reliability or security of the overall system", "c": 1}]}, {"id": "ZS-20", "src": "extra", "de": "Welche Aussagen zu soziotechnischen Systemen sind korrekt?", "en": "Which statements about socio-technical systems are correct?", "opts": [{"de": "Sie sind häufig nicht-deterministisch", "en": "They are often non-deterministic", "c": 1}, {"de": "Menschliche und organisatorische Faktoren beeinflussen ihren Betrieb erheblich", "en": "Human and organizational factors significantly influence their operation", "c": 1}, {"de": "Das Ausmaß der Zielunterstützung hängt allein vom technischen System ab", "en": "The degree of goal support depends solely on the technical system", "c": 0}, {"de": "Sie umfassen Hardware, Software und Menschen", "en": "They include hardware, software and people", "c": 1}]}, {"id": "ZS-21", "src": "extra", "de": "Die Schichten eines soziotechnischen Systems umfassen unter anderem …", "en": "The layers of a socio-technical system include …", "opts": [{"de": "die Hardware- und die Betriebssystemschicht", "en": "the hardware and operating system layer", "c": 1}, {"de": "die Geschäftsprozess- und die Organisationsschicht", "en": "the business process and organization layer", "c": 1}, {"de": "die soziale Schicht (Gesellschaft)", "en": "the social layer (society)", "c": 1}, {"de": "eine Marketingschicht als zwingenden Bestandteil", "en": "a marketing layer as a mandatory component", "c": 0}]}, {"id": "ZS-22", "src": "extra", "de": "Die wesentlichen Prozesse des Systems-Engineerings sind …", "en": "The essential processes of systems engineering are …", "opts": [{"de": "Systembeschaffung (Procurement)", "en": "System procurement", "c": 1}, {"de": "Systementwicklung (Development)", "en": "System development", "c": 1}, {"de": "Systembetrieb (Operation)", "en": "System operation", "c": 1}, {"de": "Systemmarketing (Promotion)", "en": "System marketing (promotion)", "c": 0}]}, {"id": "ZS-23", "src": "extra", "de": "Die Systementwicklung (Development) umfasst …", "en": "System development includes …", "opts": [{"de": "Anforderungsspezifikation und Design", "en": "Requirements specification and design", "c": 1}, {"de": "Konstruktion, Integration und Testen", "en": "Construction, integration and testing", "c": 1}, {"de": "die Entscheidung, welches System überhaupt gekauft werden soll", "en": "the decision of which system to buy", "c": 0}, {"de": "das Entwickeln oder Zukaufen von Komponenten", "en": "developing or purchasing components", "c": 1}]}, {"id": "ZS-24", "src": "extra", "de": "Welche der folgenden sind Phasen des Systemlebenszyklus (Life Cycle)?", "en": "Which of the following are phases of the system life cycle?", "opts": [{"de": "Initiierung und Machbarkeitsstudie", "en": "Initiation and feasibility study", "c": 1}, {"de": "Anforderungsanalyse und Systemdesign", "en": "Requirements analysis and system design", "c": 1}, {"de": "System Build, Implementierung und Wartung (Maintenance)", "en": "System build, implementation and maintenance", "c": 1}, {"de": "Die Kill-Phase, in der das System aus der Produktion genommen wird", "en": "The kill phase, in which the system is taken out of production", "c": 1}]}, {"id": "ZS-25", "src": "extra", "de": "Eine Total-Cost-of-Ownership-(TCO-)Analyse …", "en": "A Total Cost of Ownership (TCO) analysis …", "opts": [{"de": "betrachtet die Gesamtkosten eines Systems über seine Lebensdauer", "en": "considers the total costs of a system over its lifetime", "c": 1}, {"de": "berücksichtigt nur den Anschaffungspreis", "en": "only considers the purchase price", "c": 0}, {"de": "stellt Systemnutzung, Systemnutzen und Systemkosten über die Zeit dar", "en": "shows system usage, system benefit and system costs over time", "c": 1}, {"de": "unterstützt fundierte Beschaffungsentscheidungen", "en": "supports informed procurement decisions", "c": 1}]}, {"id": "ZS-26", "src": "extra", "de": "Die Machbarkeitsstudie (Feasibility Study) …", "en": "The feasibility study …", "opts": [{"de": "prüft technische Aspekte eines geplanten Systems", "en": "examines technical aspects of a planned system", "c": 1}, {"de": "prüft wirtschaftliche Aspekte", "en": "examines economic aspects", "c": 1}, {"de": "prüft betriebliche/operative Aspekte", "en": "examines operational aspects", "c": 1}, {"de": "legt bereits den finalen Programmcode fest", "en": "already defines the final program code", "c": 0}]}, {"id": "ZS-27", "src": "extra", "de": "Welche Aussagen zu Software-Reviews und -Inspektionen sind korrekt?", "en": "Which statements about software reviews and inspections are correct?", "opts": [{"de": "Reviews sind eine weit verbreitete Technik zur Qualitätsbewertung", "en": "Reviews are a widely used technique for quality assessment", "c": 1}, {"de": "Bei einer Inspektion prüft ein kleines Team den Code systematisch (oft zeilenweise)", "en": "In an inspection, a small team systematically checks the code (often line by line)", "c": 1}, {"de": "Inspektionen erfordern stets die Ausführung des Programms", "en": "Inspections always require the execution of the program", "c": 0}, {"de": "Checklisten zu häufigen Mängeln können dabei helfen", "en": "Checklists of common defects can be helpful", "c": 1}]}, {"id": "ZS-28", "src": "extra", "de": "Zur Abgrenzung von Qualitätsbegriffen gilt …", "en": "Regarding quality concepts …", "opts": [{"de": "Qualitätssicherung definiert Prozesse und Standards für hochwertige Produkte", "en": "Quality assurance defines processes and standards for high-quality products", "c": 1}, {"de": "Qualitätskontrolle macht Produkte ausfindig, die dem Standard nicht entsprechen", "en": "Quality control identifies products that do not meet the standard", "c": 1}, {"de": "Qualitätsmanagement prüft die Einhaltung von Verfahren und Standards", "en": "Quality management checks compliance with procedures and standards", "c": 1}, {"de": "Qualitätsmanagement wird typischerweise vom Entwicklungsteam selbst übernommen", "en": "Quality management is typically carried out by the development team itself", "c": 0}]}, {"id": "ZS-29", "src": "extra", "de": "Bezüglich der ISO-9001-Norm gilt …", "en": "Regarding the ISO 9001 standard …", "opts": [{"de": "Sie ist die allgemeinste der ISO-9000-Normen", "en": "It is the most general of the ISO 9000 standards", "c": 1}, {"de": "Sie legt Qualitätsprozesse fest, die im Qualitätshandbuch dokumentiert werden", "en": "It defines quality processes documented in the quality manual", "c": 1}, {"de": "Eine Zertifizierung garantiert automatisch bessere Software", "en": "Certification automatically guarantees better software", "c": 0}, {"de": "Manche Kunden verlangen die Zertifizierung als Nachweis eines QM-Systems", "en": "Some customers require certification as evidence of a QM system", "c": 1}]}, {"id": "ZS-30", "src": "extra", "de": "Welche Aussagen zur Aufwands- und Kostenschätzung sind korrekt?", "en": "Which statements about effort and cost estimation are correct?", "opts": [{"de": "COCOMO ist ein algorithmisches Kostenschätzmodell", "en": "COCOMO is an algorithmic cost estimation model", "c": 1}, {"de": "Mehr Personal verkürzt die Projektdauer nicht proportional (Brooks'sches Gesetz)", "en": "More staff does not shorten project duration proportionally (Brooks' Law)", "c": 1}, {"de": "Schätzungen sind oft ungenau, da Anforderungen unklar oder veränderlich sind", "en": "Estimates are often inaccurate because requirements are unclear or changeable", "c": 1}, {"de": "Der Verkaufspreis entspricht immer exakt den Kosten plus einem festen Aufschlag", "en": "The selling price always exactly equals costs plus a fixed markup", "c": 0}]}];
+
+let aqLang = 'de';
+let aqFilter = 'all';
+let aqSearchVal = '';
+let aqMatches = [];
+let aqCurrent = -1;
+
+// ── Tab-Switching ────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  const sp = document.getElementById('sp-container');
+  const aq = document.getElementById('aq-container');
+  const nav = document.getElementById('searchNav');
+  const btt = document.getElementById('backToTop');
+  const tsp = document.getElementById('tab-sp');
+  const taq = document.getElementById('tab-aq');
+  if (tab === 'sp') {
+    sp.style.display = ''; aq.style.display = 'none';
+    tsp.classList.add('active'); taq.classList.remove('active');
+    nav.classList.remove('show'); btt.classList.remove('show');
+  } else {
+    sp.style.display = 'none'; aq.style.display = 'block';
+    tsp.classList.remove('active'); taq.classList.add('active');
+    nav.classList.remove('show'); btt.classList.remove('show');
+    if (!document.getElementById('aq-list').children.length) renderAq();
+  }
+}
+
+// ── Filter / Lang ────────────────────────────────────────────────────────────
+function aqSetFilter(src, btn) {
+  aqFilter = src;
+  document.querySelectorAll('.aq-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAq();
+}
+
+function aqSetLang(lang) {
+  aqLang = lang;
+  document.getElementById('lang-de').classList.toggle('active', lang === 'de');
+  document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+  renderAq();
+}
+
+// ── Search ───────────────────────────────────────────────────────────────────
+let aqTimer = null;
+function debouncedAqSearch(val) {
+  clearTimeout(aqTimer);
+  aqTimer = setTimeout(() => { aqSearchVal = val.trim(); renderAq(); }, 150);
+}
+
+function aqEscReg(s) { return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+
+function aqHighlight(text, q) {
+  if (!q) return text;
+  return text.replace(new RegExp(aqEscReg(q),'gi'), m => `<mark class="aq-hl">${m}</mark>`);
+}
+
+// ── Render ───────────────────────────────────────────────────────────────────
+function renderAq() {
+  const list = document.getElementById('aq-list');
+  const q = aqSearchVal.toLowerCase();
+  const filtered = AQ_DATA.filter(item => {
+    if (aqFilter !== 'all' && item.src !== aqFilter) return false;
+    if (!q) return true;
+    const haystack = (item.de + ' ' + item.en + ' ' +
+      item.opts.map(o => o.de + ' ' + o.en).join(' ')).toLowerCase();
+    return haystack.includes(q);
+  });
+
+  document.getElementById('aqCount').textContent =
+    filtered.length + ' von ' + AQ_DATA.length + ' Fragen';
+
+  const srcLabel = { K1:'Klausur 1 · 2016', K2:'Klausur 2 · 2015', extra:'Zusatzfragen' };
+
+  list.innerHTML = filtered.map((item, idx) => {
+    const qText = aqHighlight(item[aqLang] || item.de, aqSearchVal);
+    const opts = item.opts.map(o => {
+      const txt = aqHighlight(o[aqLang] || o.de, aqSearchVal);
+      const cls = o.c ? 'correct' : 'incorrect';
+      const icon = o.c ? '✅' : '❌';
+      const note = o.n ? `<div class="aq-note">${o.n}</div>` : '';
+      return `<div class="aq-option">
+        <span class="aq-opt-icon">${icon}</span>
+        <span class="aq-opt-text ${cls}">${txt}${note}</span>
+      </div>`;
+    }).join('');
+
+    return `<div class="aq-card" data-id="${item.id}">
+      <div class="aq-card-head" onclick="aqToggle(this)">
+        <span class="aq-q-num">#${idx+1}</span>
+        <span class="aq-src-badge aq-src-${item.src}">${srcLabel[item.src]}</span>
+        <span class="aq-q-text">${qText}</span>
+        <span class="aq-arrow">▼</span>
+      </div>
+      <div class="aq-card-body">
+        ${opts}
+      </div>
+    </div>`;
+  }).join('');
+
+  // re-collect highlights for navigation
+  aqMatches = Array.from(document.querySelectorAll('mark.aq-hl'));
+  aqCurrent = aqMatches.length ? 0 : -1;
+  aqUpdateNav();
+  if (aqCurrent >= 0) aqMatches[0].scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function aqToggle(head) {
+  const body = head.nextElementSibling;
+  const arrow = head.querySelector('.aq-arrow');
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+// Alle Karten aufklappen/zuklappen
+function aqExpandAll(open) {
+  document.querySelectorAll('.aq-card-body').forEach(b => b.classList.toggle('open', open));
+  document.querySelectorAll('.aq-card .aq-arrow').forEach(a => a.classList.toggle('open', open));
+}
+
+// ── Navigation für AQ-Highlights ─────────────────────────────────────────────
+function aqUpdateNav() {
+  const nav = document.getElementById('searchNav');
+  aqMatches.forEach(m => m.classList.remove('current'));
+  if (aqMatches.length > 0 && document.getElementById('aq-container').style.display !== 'none') {
+    nav.classList.add('show');
+    document.getElementById('navCount').textContent = (aqCurrent+1)+' / '+aqMatches.length;
+    if (aqCurrent >= 0) aqMatches[aqCurrent].classList.add('current');
+  } else if (document.getElementById('aq-container').style.display !== 'none') {
+    nav.classList.remove('show');
+  }
+}
+// Override navMatch for AQ context
+const _origNavMatch = navMatch;
+function navMatch(dir) {
+  if (document.getElementById('aq-container').style.display !== 'none') {
+    if (!aqMatches.length) return;
+    aqMatches[aqCurrent].classList.remove('current');
+    aqCurrent = (aqCurrent + dir + aqMatches.length) % aqMatches.length;
+    aqMatches[aqCurrent].classList.add('current');
+    document.getElementById('navCount').textContent = (aqCurrent+1)+' / '+aqMatches.length;
+    aqMatches[aqCurrent].scrollIntoView({behavior:'smooth',block:'center'});
+    document.getElementById('aqInput').blur();
+  } else {
+    _origNavMatch(dir);
+  }
+}
+
+</script>
+</body>
+</html>
